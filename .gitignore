@@ -1,0 +1,14 @@
+__pycache__
+instance/bne.db
+*.db
+*.zip
+*.ods
+*.xml
+*.csv
+*.json
+*.mrc
+*.zip
+.env
+venv
+config.*
+.DS_Store

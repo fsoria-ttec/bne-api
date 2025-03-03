@@ -1,0 +1,123 @@
+{%extends "base.html"%}
+{%block main%}
+{%if fields%}
+<div class="d-flex justify-content-center flex-wrap mb-5">
+    <div class="">
+        <h3 class="text-center mb-4">Campos mapeados</h3>
+        <div class="d-flex justify-content-center flex-wrap">
+            <ul class="list-group" style="width: 300px;">
+                {%for field in fields%}
+                {%if loop.index %2 == 0%}
+                <li class="list-group-item {{field.t}}" onmouseover="show_t(this)" onmouseout="show_t(this, true)" data-bs-trigger="click" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="{{field.description}}">
+                    {{field.name}}
+                </li>
+                {%endif%}
+                {%endfor%}
+            </ul>
+            <ul class="list-group me-5" style="width: 300px;">
+                {%for field in fields%}
+                {%if loop.index %2 != 0%}
+                <li class="list-group-item {{field.t}}" onmouseover="show_t(this)" onmouseout="show_t(this, true)" data-bs-trigger="click" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="{{field.description}}">
+                    {{field.name}}
+                </li>
+                {%endif%}
+                {%endfor%}
+            </ul>
+        </div>
+    </div>
+    <div>
+        <h3 class="text-center mb-4">Campos MARC21</h3>
+        <div class="d-flex">
+            <ul class="list-group ms-5" style="width: 175px;">
+                {%for field in fields%}
+                {%if loop.index %2 == 0%}
+                <li class="list-group-item {{field.t}}" onmouseover="show_t(this)" onmouseout="show_t(this, true)" data-bs-trigger="click" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{field.t_description}}">
+                    {%if field.t[0] == "_"%}
+                    {{field.t[2:]}}
+                    {%else%}
+                    {{field.t}}
+                    {%endif%}
+                </li>
+                {%endif%}
+                {%endfor%}
+            </ul>
+            <ul class="list-group" style="width: 175px;">
+                {%for field in fields%}
+                {%if loop.index %2 != 0%}
+                <li class="list-group-item {{field.t}}" onmouseover="show_t(this)" onmouseout="show_t(this, true)" data-bs-trigger="click" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{field.t_description}}">
+                    {%if field.t[0] == "_"%}
+                    {{field.t[2:]}}
+                    {%else%}
+                    {{field.t}}
+                    {%endif%}
+                </li>
+                {%endif%}
+                {%endfor%}
+            </ul>
+        </div>
+    </div>
+</div>
+{%else%}
+<h3 class="text-center mb-5">Diagramas</h3>
+<div class="d-flex justify-content-center flex-wrap gap-5 mb-5">
+    <!--Sección Registros bibliograficos -->
+    <div class="text-center">
+        <h4 class="mb-4">Registros bibliograficos</h4>
+        <div class="d-flex flex-column align-items-center">
+            <!-- Lista de botões -->
+            <ul class="list-group list-unstyled" style="width: 300px;">
+                <!-- Lista de links gerados dinamicamente ou manualmente -->
+                <li><a class="btn btn-dark mb-3" href="?dataset=gra" role="button">Dibujos</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=grp" role="button">Filminas</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=son" role="button">Grabaciones sonoras</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=kit" role="button">Kit multimedia</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=mss" role="button">Manuscritos</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=map" role="button">Mapas</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=mam" role="button">Materiales mixtos</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=moa" role="button">Monografías antiguas</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=mon" role="button">Monografías modernas</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=par" role="button">Partituras</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=ser" role="button">Prensa y Revista</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=ele" role="button">Recursos electrónicos</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=vid" role="button">Videograbaciones</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Seção Registros de Autoridad -->
+    <div class="text-center">
+        <h4 class="mb-4">Registros de Autoridad</h4>
+        <div class="d-flex flex-column align-items-center">
+            <!-- Lista de botões -->
+            <ul class="list-group list-unstyled" style="width: 175px;">
+                <!-- Lista de links gerados dinamicamente ou manualmente -->
+                <li><a class="btn btn-dark mb-3" href="?dataset=con" role="button">Congresos</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=ent" role="button">Entidades</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=gen" role="button">Genero/Forma</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=geo" role="button">Geográfico</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=per" role="button">Personas</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=tit" role="button">Titulos</a></li>
+                <li><a class="btn btn-dark mb-3" href="?dataset=mat" role="button">Materias</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{%endif%}
+
+
+<script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    const show_t = (element, deactivate) => {
+        // const t = element.className.substring(element.className.length -5, element.className.length);
+        const t = element.className.match(/\d{1,}, \d{1,}|\d{1,}|_\d{1,}, \d{1,}|\d/);
+        [...document.getElementsByClassName(element.className)].forEach((element) => {
+            element.className = `list-group-item active ${t[0]}`;
+            element.click()
+            if (deactivate) {
+                element.className = `list-group-item ${t[0]}`;
+            };
+        });
+    };
+</script>
+{%endblock%}
