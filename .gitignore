@@ -9,6 +9,7 @@ instance/bne.db
 *.mrc
 *.zip
 .env
+.log
 venv
 config.*
 .DS_Store
