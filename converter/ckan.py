@@ -1,12 +1,16 @@
 import requests as req
 import json
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from tqdm import tqdm
 from datetime import datetime
 from constants import dataset_titles
+from configs import CONFIG_FILE
 
 load_dotenv()
+
+CONFIG_FILE = Path(__file__).resolve().parent / "bne_config.json"
 
 API_KEY = os.getenv("BNE_API_KEY", "")
 CKAN_URL = os.getenv("BNE_CKAN_URL", "http://svjc-des-ckan.ttec.es:84/catalogo")
