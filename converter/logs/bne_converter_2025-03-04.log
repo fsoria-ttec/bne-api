@@ -1,0 +1,71 @@
+2025-03-04 01:20:30,674 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 01:20:30
+2025-03-04 01:20:33,561 - INFO - root - Iniciando descarga de 1 archivos
+2025-03-04 01:20:33,621 - INFO - root - Descargando GRAFPRO
+2025-03-04 01:20:33,621 - INFO - console_ui - Descargando GRAFPRO...
+2025-03-04 01:20:33,719 - INFO - root - Descarga completada: GRAFPRO
+2025-03-04 01:20:33,719 - INFO - console_ui - Descarga completada: GRAFPRO
+2025-03-04 01:20:33,721 - INFO - root - Resumen de descarga: Total=1, Omitidos=0, Fallidos=0
+2025-03-04 01:20:33,721 - INFO - root - Iniciando inserción de datos para 1 datasets
+2025-03-04 01:20:33,721 - INFO - root - Iniciando procesamiento del dataset grp
+2025-03-04 01:20:33,734 - ERROR - root - Error procesando dataset grp: can only concatenate str (not "NoneType") to str
+2025-03-04 01:20:33,737 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/main.py", line 278, in insertion
+    data_row = extract_values(dataset, record_dict)
+  File "/Users/pole/Projects/bne-api/converter/humanizer.py", line 1383, in extract_values
+    humans.append(son_serie(record.get("440"), record.get("490")))
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pole/Projects/bne-api/converter/humanizer.py", line 14, in inner
+    result = f(*args)
+  File "/Users/pole/Projects/bne-api/converter/humanizer.py", line 2894, in son_serie
+    result += d_a
+TypeError: can only concatenate str (not "NoneType") to str
+
+2025-03-04 01:20:33,737 - ERROR - console_ui - Error procesando dataset grp: can only concatenate str (not "NoneType") to str
+2025-03-04 01:20:39,526 - ERROR - console_ui - Por favor, ingrese un número válido
+2025-03-04 01:22:34,960 - INFO - console_ui - Cerrando BNE Converter.
+2025-03-04 01:23:23,880 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 01:23:23
+2025-03-04 01:23:26,372 - INFO - root - Iniciando descarga de 1 archivos
+2025-03-04 01:23:26,434 - INFO - root - Descargando GRAFNOPRO
+2025-03-04 01:23:26,434 - INFO - console_ui - Descargando GRAFNOPRO...
+2025-03-04 01:23:28,326 - INFO - root - Descarga completada: GRAFNOPRO
+2025-03-04 01:23:28,327 - INFO - console_ui - Descarga completada: GRAFNOPRO
+2025-03-04 01:23:28,330 - INFO - root - Resumen de descarga: Total=1, Omitidos=0, Fallidos=0
+2025-03-04 01:23:28,331 - INFO - root - Iniciando inserción de datos para 1 datasets
+2025-03-04 01:23:28,333 - INFO - root - Iniciando procesamiento del dataset gra
+2025-03-04 01:23:29,029 - INFO - root - Dataset gra: 7464 registros procesados
+2025-03-04 01:23:29,029 - INFO - console_ui - Dataset gra: 7464 registros procesados
+2025-03-04 01:24:05,971 - INFO - console_ui - Cerrando BNE Converter.
+2025-03-04 01:24:42,288 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 01:24:42
+2025-03-04 01:24:44,565 - INFO - root - Iniciando descarga de 1 archivos
+2025-03-04 01:24:44,626 - INFO - root - Descargando GRAFNOPRO
+2025-03-04 01:24:44,626 - INFO - console_ui - Descargando GRAFNOPRO...
+2025-03-04 01:24:46,603 - INFO - root - Descarga completada: GRAFNOPRO
+2025-03-04 01:24:46,603 - INFO - console_ui - Descarga completada: GRAFNOPRO
+2025-03-04 01:24:46,608 - INFO - root - Resumen de descarga: Total=1, Omitidos=0, Fallidos=0
+2025-03-04 01:24:46,608 - INFO - root - Iniciando inserción de datos para 1 datasets
+2025-03-04 01:24:46,610 - INFO - root - Iniciando procesamiento del dataset gra
+2025-03-04 01:24:47,298 - INFO - root - Dataset gra: 7464 registros procesados
+2025-03-04 01:24:47,298 - INFO - console_ui - Dataset gra: 7464 registros procesados
+2025-03-04 01:24:51,128 - INFO - root - Iniciando descarga de 1 archivos
+2025-03-04 01:24:51,201 - INFO - root - Descargando GRAFNOPRO
+2025-03-04 01:24:51,201 - INFO - console_ui - Descargando GRAFNOPRO...
+2025-03-04 01:24:53,128 - INFO - root - Descarga completada: GRAFNOPRO
+2025-03-04 01:24:53,128 - INFO - console_ui - Descarga completada: GRAFNOPRO
+2025-03-04 01:24:53,132 - INFO - root - Resumen de descarga: Total=1, Omitidos=0, Fallidos=0
+2025-03-04 01:24:53,132 - INFO - root - Iniciando inserción de datos para 1 datasets
+2025-03-04 01:24:53,133 - INFO - root - Iniciando procesamiento del dataset gra
+2025-03-04 01:24:53,818 - INFO - root - Dataset gra: 7464 registros procesados
+2025-03-04 01:24:53,818 - INFO - console_ui - Dataset gra: 7464 registros procesados
+2025-03-04 01:25:00,984 - INFO - console_ui - Cerrando BNE Converter.
+2025-03-04 01:26:31,567 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 01:26:31
+2025-03-04 01:26:33,718 - INFO - root - Iniciando descarga de 1 archivos
+2025-03-04 01:26:33,779 - INFO - root - Descargando GRAFNOPRO
+2025-03-04 01:26:33,779 - INFO - console_ui - Descargando GRAFNOPRO...
+2025-03-04 01:26:35,609 - INFO - root - Descarga completada: GRAFNOPRO
+2025-03-04 01:26:35,609 - INFO - console_ui - Descarga completada: GRAFNOPRO
+2025-03-04 01:26:35,613 - INFO - root - Resumen de descarga: Total=1, Omitidos=0, Fallidos=0
+2025-03-04 01:26:35,614 - INFO - root - Iniciando inserción de datos para 1 datasets
+2025-03-04 01:26:35,616 - INFO - root - Iniciando procesamiento del dataset gra
+2025-03-04 01:26:36,304 - INFO - root - Dataset gra: 7464 registros procesados
+2025-03-04 01:26:36,304 - INFO - console_ui - Dataset gra: 7464 registros procesados
+2025-03-04 01:27:24,503 - INFO - console_ui - Cerrando BNE Converter.
