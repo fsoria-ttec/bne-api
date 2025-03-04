@@ -1,0 +1,599 @@
+2025-03-04 00:14:39,365 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 00:14:39
+2025-03-04 00:16:38,635 - INFO - root - Programa interrumpido por el usuario
+2025-03-04 00:16:40,760 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 00:16:40
+2025-03-04 00:16:46,730 - INFO - root - Iniciando descarga de 1 archivos
+2025-03-04 00:16:46,792 - INFO - root - Omitiendo GRAFNOPRO - no ha cambiado desde la última descarga
+2025-03-04 00:16:46,792 - INFO - console_ui - Omitiendo GRAFNOPRO - no ha cambiado
+2025-03-04 00:16:46,793 - INFO - root - Resumen de descarga: Total=1, Omitidos=1, Fallidos=0
+2025-03-04 00:16:46,793 - INFO - root - Iniciando inserción de datos para 1 datasets
+2025-03-04 00:16:46,795 - INFO - root - Iniciando procesamiento del dataset gra
+2025-03-04 00:16:47,610 - INFO - root - Dataset gra: 7464 registros procesados
+2025-03-04 00:16:47,610 - INFO - console_ui - Dataset gra: 7464 registros procesados
+2025-03-04 00:16:57,135 - ERROR - root - Error actualizando CKAN: name 'CONFIG_FILE' is not defined
+2025-03-04 00:16:57,136 - ERROR - console_ui - Error actualizando CKAN: name 'CONFIG_FILE' is not defined
+2025-03-04 00:17:11,140 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 00:17:11
+2025-03-04 00:17:11,140 - INFO - root - Exportando gra en CSV-UTF8
+2025-03-04 00:17:11,140 - INFO - console_ui - Exportando gra en CSV-UTF8
+2025-03-04 00:17:11,210 - INFO - root - Exportando gra en CSV-CP1252
+2025-03-04 00:17:11,211 - INFO - console_ui - Exportando gra en CSV-CP1252
+2025-03-04 00:17:11,215 - INFO - root - Exportando gra en ODS
+2025-03-04 00:17:11,215 - INFO - console_ui - Exportando gra en ODS
+2025-03-04 00:17:11,265 - INFO - root - Exportando gra en TXT-UTF8
+2025-03-04 00:17:11,265 - INFO - console_ui - Exportando gra en TXT-UTF8
+2025-03-04 00:17:11,329 - INFO - root - Exportando gra en JSON
+2025-03-04 00:17:11,329 - INFO - console_ui - Exportando gra en JSON
+2025-03-04 00:17:11,544 - INFO - root - Exportando gra en XML
+2025-03-04 00:17:11,544 - INFO - console_ui - Exportando gra en XML
+2025-03-04 00:17:11,553 - ERROR - root - Error exportando gra a XML: can only concatenate str (not "float") to str
+2025-03-04 00:17:11,553 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 212, in export_xml_2
+    with tqdm(total=total_records, desc=f"Exportando {dataset} a XML", unit="registros") as pbar:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pole/Projects/bne-api/.venv/lib/python3.13/site-packages/tqdm/std.py", line 1098, in __init__
+    self.refresh(lock_args=self.lock_args)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pole/Projects/bne-api/.venv/lib/python3.13/site-packages/tqdm/std.py", line 1347, in refresh
+    self.display()
+    ~~~~~~~~~~~~^^
+  File "/Users/pole/Projects/bne-api/.venv/lib/python3.13/site-packages/tqdm/std.py", line 1495, in display
+    self.sp(self.__str__() if msg is None else msg)
+            ~~~~~~~~~~~~^^
+  File "/Users/pole/Projects/bne-api/.venv/lib/python3.13/site-packages/tqdm/std.py", line 1151, in __str__
+    return self.format_meter(**self.format_dict)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pole/Projects/bne-api/.venv/lib/python3.13/site-packages/tqdm/std.py", line 534, in format_meter
+    if total and n >= (total + 0.5):  # allow float imprecision (#849)
+                       ~~~~~~^~~~~
+TypeError: can only concatenate str (not "float") to str
+
+2025-03-04 00:17:11,553 - ERROR - console_ui - Error exportando a XML: can only concatenate str (not "float") to str
+2025-03-04 00:17:11,554 - INFO - root - Limpiando archivos temporales de gra
+2025-03-04 00:17:11,570 - INFO - console_ui - Archivos generados para gra
+2025-03-04 00:17:11,570 - INFO - root - Exportando grp en CSV-UTF8
+2025-03-04 00:17:11,570 - INFO - console_ui - Exportando grp en CSV-UTF8
+2025-03-04 00:17:11,575 - INFO - root - Exportando grp en CSV-CP1252
+2025-03-04 00:17:11,575 - INFO - console_ui - Exportando grp en CSV-CP1252
+2025-03-04 00:17:11,577 - INFO - root - Exportando grp en ODS
+2025-03-04 00:17:11,577 - INFO - console_ui - Exportando grp en ODS
+2025-03-04 00:17:11,580 - INFO - root - Exportando grp en TXT-UTF8
+2025-03-04 00:17:11,580 - INFO - console_ui - Exportando grp en TXT-UTF8
+2025-03-04 00:17:11,585 - INFO - root - Exportando grp en JSON
+2025-03-04 00:17:11,585 - INFO - console_ui - Exportando grp en JSON
+2025-03-04 00:17:11,590 - INFO - root - Exportando grp en XML
+2025-03-04 00:17:11,590 - INFO - console_ui - Exportando grp en XML
+2025-03-04 00:17:11,590 - ERROR - root - Error exportando grp a XML: no such table: grp
+2025-03-04 00:17:11,590 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: grp
+
+2025-03-04 00:17:11,590 - ERROR - console_ui - Error exportando a XML: no such table: grp
+2025-03-04 00:17:11,590 - INFO - root - Limpiando archivos temporales de grp
+2025-03-04 00:17:11,606 - INFO - console_ui - Archivos generados para grp
+2025-03-04 00:17:11,607 - INFO - root - Exportando son en CSV-UTF8
+2025-03-04 00:17:11,607 - INFO - console_ui - Exportando son en CSV-UTF8
+2025-03-04 00:17:11,612 - INFO - root - Exportando son en CSV-CP1252
+2025-03-04 00:17:11,612 - INFO - console_ui - Exportando son en CSV-CP1252
+2025-03-04 00:17:11,615 - INFO - root - Exportando son en ODS
+2025-03-04 00:17:11,615 - INFO - console_ui - Exportando son en ODS
+2025-03-04 00:17:11,617 - INFO - root - Exportando son en TXT-UTF8
+2025-03-04 00:17:11,617 - INFO - console_ui - Exportando son en TXT-UTF8
+2025-03-04 00:17:11,622 - INFO - root - Exportando son en JSON
+2025-03-04 00:17:11,622 - INFO - console_ui - Exportando son en JSON
+2025-03-04 00:17:11,626 - INFO - root - Exportando son en XML
+2025-03-04 00:17:11,626 - INFO - console_ui - Exportando son en XML
+2025-03-04 00:17:11,626 - ERROR - root - Error exportando son a XML: no such table: son
+2025-03-04 00:17:11,626 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: son
+
+2025-03-04 00:17:11,626 - ERROR - console_ui - Error exportando a XML: no such table: son
+2025-03-04 00:17:11,626 - INFO - root - Limpiando archivos temporales de son
+2025-03-04 00:17:11,638 - INFO - console_ui - Archivos generados para son
+2025-03-04 00:17:11,638 - INFO - root - Exportando ele en CSV-UTF8
+2025-03-04 00:17:11,638 - INFO - console_ui - Exportando ele en CSV-UTF8
+2025-03-04 00:17:11,643 - INFO - root - Exportando ele en CSV-CP1252
+2025-03-04 00:17:11,643 - INFO - console_ui - Exportando ele en CSV-CP1252
+2025-03-04 00:17:11,645 - INFO - root - Exportando ele en ODS
+2025-03-04 00:17:11,645 - INFO - console_ui - Exportando ele en ODS
+2025-03-04 00:17:11,648 - INFO - root - Exportando ele en TXT-UTF8
+2025-03-04 00:17:11,648 - INFO - console_ui - Exportando ele en TXT-UTF8
+2025-03-04 00:17:11,652 - INFO - root - Exportando ele en JSON
+2025-03-04 00:17:11,652 - INFO - console_ui - Exportando ele en JSON
+2025-03-04 00:17:11,662 - INFO - root - Exportando ele en XML
+2025-03-04 00:17:11,662 - INFO - console_ui - Exportando ele en XML
+2025-03-04 00:17:11,662 - ERROR - root - Error exportando ele a XML: no such table: ele
+2025-03-04 00:17:11,662 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: ele
+
+2025-03-04 00:17:11,662 - ERROR - console_ui - Error exportando a XML: no such table: ele
+2025-03-04 00:17:11,662 - INFO - root - Limpiando archivos temporales de ele
+2025-03-04 00:17:11,675 - INFO - console_ui - Archivos generados para ele
+2025-03-04 00:17:11,675 - INFO - root - Exportando vid en CSV-UTF8
+2025-03-04 00:17:11,675 - INFO - console_ui - Exportando vid en CSV-UTF8
+2025-03-04 00:17:11,679 - INFO - root - Exportando vid en CSV-CP1252
+2025-03-04 00:17:11,679 - INFO - console_ui - Exportando vid en CSV-CP1252
+2025-03-04 00:17:11,681 - INFO - root - Exportando vid en ODS
+2025-03-04 00:17:11,681 - INFO - console_ui - Exportando vid en ODS
+2025-03-04 00:17:11,684 - INFO - root - Exportando vid en TXT-UTF8
+2025-03-04 00:17:11,684 - INFO - console_ui - Exportando vid en TXT-UTF8
+2025-03-04 00:17:11,689 - INFO - root - Exportando vid en JSON
+2025-03-04 00:17:11,689 - INFO - console_ui - Exportando vid en JSON
+2025-03-04 00:17:11,693 - INFO - root - Exportando vid en XML
+2025-03-04 00:17:11,693 - INFO - console_ui - Exportando vid en XML
+2025-03-04 00:17:11,693 - ERROR - root - Error exportando vid a XML: no such table: vid
+2025-03-04 00:17:11,693 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: vid
+
+2025-03-04 00:17:11,693 - ERROR - console_ui - Error exportando a XML: no such table: vid
+2025-03-04 00:17:11,693 - INFO - root - Limpiando archivos temporales de vid
+2025-03-04 00:17:11,705 - INFO - console_ui - Archivos generados para vid
+2025-03-04 00:17:11,705 - INFO - root - Exportando par en CSV-UTF8
+2025-03-04 00:17:11,705 - INFO - console_ui - Exportando par en CSV-UTF8
+2025-03-04 00:17:11,710 - INFO - root - Exportando par en CSV-CP1252
+2025-03-04 00:17:11,710 - INFO - console_ui - Exportando par en CSV-CP1252
+2025-03-04 00:17:11,712 - INFO - root - Exportando par en ODS
+2025-03-04 00:17:11,712 - INFO - console_ui - Exportando par en ODS
+2025-03-04 00:17:11,714 - INFO - root - Exportando par en TXT-UTF8
+2025-03-04 00:17:11,714 - INFO - console_ui - Exportando par en TXT-UTF8
+2025-03-04 00:17:11,719 - INFO - root - Exportando par en JSON
+2025-03-04 00:17:11,719 - INFO - console_ui - Exportando par en JSON
+2025-03-04 00:17:11,723 - INFO - root - Exportando par en XML
+2025-03-04 00:17:11,723 - INFO - console_ui - Exportando par en XML
+2025-03-04 00:17:11,724 - ERROR - root - Error exportando par a XML: no such table: par
+2025-03-04 00:17:11,724 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: par
+
+2025-03-04 00:17:11,724 - ERROR - console_ui - Error exportando a XML: no such table: par
+2025-03-04 00:17:11,724 - INFO - root - Limpiando archivos temporales de par
+2025-03-04 00:17:11,736 - INFO - console_ui - Archivos generados para par
+2025-03-04 00:17:11,736 - INFO - root - Exportando geo en CSV-UTF8
+2025-03-04 00:17:11,736 - INFO - console_ui - Exportando geo en CSV-UTF8
+2025-03-04 00:17:11,740 - INFO - root - Exportando geo en CSV-CP1252
+2025-03-04 00:17:11,740 - INFO - console_ui - Exportando geo en CSV-CP1252
+2025-03-04 00:17:11,742 - INFO - root - Exportando geo en ODS
+2025-03-04 00:17:11,742 - INFO - console_ui - Exportando geo en ODS
+2025-03-04 00:17:11,745 - INFO - root - Exportando geo en TXT-UTF8
+2025-03-04 00:17:11,745 - INFO - console_ui - Exportando geo en TXT-UTF8
+2025-03-04 00:17:11,749 - INFO - root - Exportando geo en JSON
+2025-03-04 00:17:11,749 - INFO - console_ui - Exportando geo en JSON
+2025-03-04 00:17:11,754 - INFO - root - Exportando geo en XML
+2025-03-04 00:17:11,754 - INFO - console_ui - Exportando geo en XML
+2025-03-04 00:17:11,754 - ERROR - root - Error exportando geo a XML: no such table: geo
+2025-03-04 00:17:11,754 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: geo
+
+2025-03-04 00:17:11,754 - ERROR - console_ui - Error exportando a XML: no such table: geo
+2025-03-04 00:17:11,754 - INFO - root - Limpiando archivos temporales de geo
+2025-03-04 00:17:11,766 - INFO - console_ui - Archivos generados para geo
+2025-03-04 00:17:11,766 - INFO - root - Exportando per en CSV-UTF8
+2025-03-04 00:17:11,766 - INFO - console_ui - Exportando per en CSV-UTF8
+2025-03-04 00:17:11,770 - INFO - root - Exportando per en CSV-CP1252
+2025-03-04 00:17:11,770 - INFO - console_ui - Exportando per en CSV-CP1252
+2025-03-04 00:17:11,773 - INFO - root - Exportando per en ODS
+2025-03-04 00:17:11,773 - INFO - console_ui - Exportando per en ODS
+2025-03-04 00:17:11,775 - INFO - root - Exportando per en TXT-UTF8
+2025-03-04 00:17:11,775 - INFO - console_ui - Exportando per en TXT-UTF8
+2025-03-04 00:17:11,779 - INFO - root - Exportando per en JSON
+2025-03-04 00:17:11,779 - INFO - console_ui - Exportando per en JSON
+2025-03-04 00:17:11,783 - INFO - root - Exportando per en XML
+2025-03-04 00:17:11,783 - INFO - console_ui - Exportando per en XML
+2025-03-04 00:17:11,783 - ERROR - root - Error exportando per a XML: no such table: per
+2025-03-04 00:17:11,783 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: per
+
+2025-03-04 00:17:11,783 - ERROR - console_ui - Error exportando a XML: no such table: per
+2025-03-04 00:17:11,783 - INFO - root - Limpiando archivos temporales de per
+2025-03-04 00:17:11,795 - INFO - console_ui - Archivos generados para per
+2025-03-04 00:17:11,795 - INFO - root - Exportando mon en CSV-UTF8
+2025-03-04 00:17:11,795 - INFO - console_ui - Exportando mon en CSV-UTF8
+2025-03-04 00:17:11,799 - INFO - root - Exportando mon en CSV-CP1252
+2025-03-04 00:17:11,799 - INFO - console_ui - Exportando mon en CSV-CP1252
+2025-03-04 00:17:11,802 - INFO - root - Exportando mon en ODS
+2025-03-04 00:17:11,802 - INFO - console_ui - Exportando mon en ODS
+2025-03-04 00:17:11,804 - INFO - root - Exportando mon en TXT-UTF8
+2025-03-04 00:17:11,804 - INFO - console_ui - Exportando mon en TXT-UTF8
+2025-03-04 00:17:11,808 - INFO - root - Exportando mon en JSON
+2025-03-04 00:17:11,808 - INFO - console_ui - Exportando mon en JSON
+2025-03-04 00:17:11,812 - INFO - root - Exportando mon en XML
+2025-03-04 00:17:11,812 - INFO - console_ui - Exportando mon en XML
+2025-03-04 00:17:11,812 - ERROR - root - Error exportando mon a XML: no such table: mon
+2025-03-04 00:17:11,812 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: mon
+
+2025-03-04 00:17:11,812 - ERROR - console_ui - Error exportando a XML: no such table: mon
+2025-03-04 00:17:11,812 - INFO - root - Limpiando archivos temporales de mon
+2025-03-04 00:17:11,824 - INFO - console_ui - Archivos generados para mon
+2025-03-04 00:17:11,824 - INFO - root - Exportando moa en CSV-UTF8
+2025-03-04 00:17:11,824 - INFO - console_ui - Exportando moa en CSV-UTF8
+2025-03-04 00:17:11,829 - INFO - root - Exportando moa en CSV-CP1252
+2025-03-04 00:17:11,829 - INFO - console_ui - Exportando moa en CSV-CP1252
+2025-03-04 00:17:11,831 - INFO - root - Exportando moa en ODS
+2025-03-04 00:17:11,831 - INFO - console_ui - Exportando moa en ODS
+2025-03-04 00:17:11,834 - INFO - root - Exportando moa en TXT-UTF8
+2025-03-04 00:17:11,834 - INFO - console_ui - Exportando moa en TXT-UTF8
+2025-03-04 00:17:11,838 - INFO - root - Exportando moa en JSON
+2025-03-04 00:17:11,838 - INFO - console_ui - Exportando moa en JSON
+2025-03-04 00:17:11,842 - INFO - root - Exportando moa en XML
+2025-03-04 00:17:11,842 - INFO - console_ui - Exportando moa en XML
+2025-03-04 00:17:11,842 - ERROR - root - Error exportando moa a XML: no such table: moa
+2025-03-04 00:17:11,842 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: moa
+
+2025-03-04 00:17:11,842 - ERROR - console_ui - Error exportando a XML: no such table: moa
+2025-03-04 00:17:11,842 - INFO - root - Limpiando archivos temporales de moa
+2025-03-04 00:17:11,854 - INFO - console_ui - Archivos generados para moa
+2025-03-04 00:17:11,854 - INFO - root - Exportando ent en CSV-UTF8
+2025-03-04 00:17:11,854 - INFO - console_ui - Exportando ent en CSV-UTF8
+2025-03-04 00:17:11,858 - INFO - root - Exportando ent en CSV-CP1252
+2025-03-04 00:17:11,858 - INFO - console_ui - Exportando ent en CSV-CP1252
+2025-03-04 00:17:11,861 - INFO - root - Exportando ent en ODS
+2025-03-04 00:17:11,861 - INFO - console_ui - Exportando ent en ODS
+2025-03-04 00:17:11,863 - INFO - root - Exportando ent en TXT-UTF8
+2025-03-04 00:17:11,863 - INFO - console_ui - Exportando ent en TXT-UTF8
+2025-03-04 00:17:11,867 - INFO - root - Exportando ent en JSON
+2025-03-04 00:17:11,867 - INFO - console_ui - Exportando ent en JSON
+2025-03-04 00:17:11,871 - INFO - root - Exportando ent en XML
+2025-03-04 00:17:11,871 - INFO - console_ui - Exportando ent en XML
+2025-03-04 00:17:11,872 - ERROR - root - Error exportando ent a XML: no such table: ent
+2025-03-04 00:17:11,872 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: ent
+
+2025-03-04 00:17:11,872 - ERROR - console_ui - Error exportando a XML: no such table: ent
+2025-03-04 00:17:11,872 - INFO - root - Limpiando archivos temporales de ent
+2025-03-04 00:17:11,883 - INFO - console_ui - Archivos generados para ent
+2025-03-04 00:17:11,883 - INFO - root - Exportando ser en CSV-UTF8
+2025-03-04 00:17:11,883 - INFO - console_ui - Exportando ser en CSV-UTF8
+2025-03-04 00:17:11,888 - INFO - root - Exportando ser en CSV-CP1252
+2025-03-04 00:17:11,888 - INFO - console_ui - Exportando ser en CSV-CP1252
+2025-03-04 00:17:11,890 - INFO - root - Exportando ser en ODS
+2025-03-04 00:17:11,890 - INFO - console_ui - Exportando ser en ODS
+2025-03-04 00:17:11,893 - INFO - root - Exportando ser en TXT-UTF8
+2025-03-04 00:17:11,893 - INFO - console_ui - Exportando ser en TXT-UTF8
+2025-03-04 00:17:11,897 - INFO - root - Exportando ser en JSON
+2025-03-04 00:17:11,897 - INFO - console_ui - Exportando ser en JSON
+2025-03-04 00:17:11,901 - INFO - root - Exportando ser en XML
+2025-03-04 00:17:11,901 - INFO - console_ui - Exportando ser en XML
+2025-03-04 00:17:11,901 - ERROR - root - Error exportando ser a XML: no such table: ser
+2025-03-04 00:17:11,901 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: ser
+
+2025-03-04 00:17:11,901 - ERROR - console_ui - Error exportando a XML: no such table: ser
+2025-03-04 00:17:11,901 - INFO - root - Limpiando archivos temporales de ser
+2025-03-04 00:17:11,913 - INFO - console_ui - Archivos generados para ser
+2025-03-04 00:17:11,913 - INFO - root - Exportando mss en CSV-UTF8
+2025-03-04 00:17:11,913 - INFO - console_ui - Exportando mss en CSV-UTF8
+2025-03-04 00:17:11,917 - INFO - root - Exportando mss en CSV-CP1252
+2025-03-04 00:17:11,917 - INFO - console_ui - Exportando mss en CSV-CP1252
+2025-03-04 00:17:11,919 - INFO - root - Exportando mss en ODS
+2025-03-04 00:17:11,919 - INFO - console_ui - Exportando mss en ODS
+2025-03-04 00:17:11,922 - INFO - root - Exportando mss en TXT-UTF8
+2025-03-04 00:17:11,922 - INFO - console_ui - Exportando mss en TXT-UTF8
+2025-03-04 00:17:11,926 - INFO - root - Exportando mss en JSON
+2025-03-04 00:17:11,926 - INFO - console_ui - Exportando mss en JSON
+2025-03-04 00:17:11,930 - INFO - root - Exportando mss en XML
+2025-03-04 00:17:11,930 - INFO - console_ui - Exportando mss en XML
+2025-03-04 00:17:11,930 - ERROR - root - Error exportando mss a XML: no such table: mss
+2025-03-04 00:17:11,930 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: mss
+
+2025-03-04 00:17:11,930 - ERROR - console_ui - Error exportando a XML: no such table: mss
+2025-03-04 00:17:11,930 - INFO - root - Limpiando archivos temporales de mss
+2025-03-04 00:17:11,941 - INFO - console_ui - Archivos generados para mss
+2025-03-04 00:17:11,942 - INFO - root - Exportando map en CSV-UTF8
+2025-03-04 00:17:11,942 - INFO - console_ui - Exportando map en CSV-UTF8
+2025-03-04 00:17:11,946 - INFO - root - Exportando map en CSV-CP1252
+2025-03-04 00:17:11,946 - INFO - console_ui - Exportando map en CSV-CP1252
+2025-03-04 00:17:11,948 - INFO - root - Exportando map en ODS
+2025-03-04 00:17:11,948 - INFO - console_ui - Exportando map en ODS
+2025-03-04 00:17:11,951 - INFO - root - Exportando map en TXT-UTF8
+2025-03-04 00:17:11,951 - INFO - console_ui - Exportando map en TXT-UTF8
+2025-03-04 00:17:11,955 - INFO - root - Exportando map en JSON
+2025-03-04 00:17:11,955 - INFO - console_ui - Exportando map en JSON
+2025-03-04 00:17:11,959 - INFO - root - Exportando map en XML
+2025-03-04 00:17:11,959 - INFO - console_ui - Exportando map en XML
+2025-03-04 00:17:11,959 - ERROR - root - Error exportando map a XML: no such table: map
+2025-03-04 00:17:11,959 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: map
+
+2025-03-04 00:17:11,959 - ERROR - console_ui - Error exportando a XML: no such table: map
+2025-03-04 00:17:11,959 - INFO - root - Limpiando archivos temporales de map
+2025-03-04 00:17:11,971 - INFO - console_ui - Archivos generados para map
+2025-03-04 00:17:11,971 - INFO - root - Exportando cog en CSV-UTF8
+2025-03-04 00:17:11,971 - INFO - console_ui - Exportando cog en CSV-UTF8
+2025-03-04 00:17:11,975 - INFO - root - Exportando cog en CSV-CP1252
+2025-03-04 00:17:11,975 - INFO - console_ui - Exportando cog en CSV-CP1252
+2025-03-04 00:17:11,977 - INFO - root - Exportando cog en ODS
+2025-03-04 00:17:11,977 - INFO - console_ui - Exportando cog en ODS
+2025-03-04 00:17:11,980 - INFO - root - Exportando cog en TXT-UTF8
+2025-03-04 00:17:11,980 - INFO - console_ui - Exportando cog en TXT-UTF8
+2025-03-04 00:17:11,984 - INFO - root - Exportando cog en JSON
+2025-03-04 00:17:11,984 - INFO - console_ui - Exportando cog en JSON
+2025-03-04 00:17:11,988 - INFO - root - Exportando cog en XML
+2025-03-04 00:17:11,988 - INFO - console_ui - Exportando cog en XML
+2025-03-04 00:17:11,988 - ERROR - root - Error exportando cog a XML: no such table: cog
+2025-03-04 00:17:11,988 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: cog
+
+2025-03-04 00:17:11,988 - ERROR - console_ui - Error exportando a XML: no such table: cog
+2025-03-04 00:17:11,988 - INFO - root - Limpiando archivos temporales de cog
+2025-03-04 00:17:12,000 - INFO - console_ui - Archivos generados para cog
+2025-03-04 00:17:12,000 - INFO - root - Exportando gen en CSV-UTF8
+2025-03-04 00:17:12,000 - INFO - console_ui - Exportando gen en CSV-UTF8
+2025-03-04 00:17:12,005 - INFO - root - Exportando gen en CSV-CP1252
+2025-03-04 00:17:12,005 - INFO - console_ui - Exportando gen en CSV-CP1252
+2025-03-04 00:17:12,007 - INFO - root - Exportando gen en ODS
+2025-03-04 00:17:12,007 - INFO - console_ui - Exportando gen en ODS
+2025-03-04 00:17:12,010 - INFO - root - Exportando gen en TXT-UTF8
+2025-03-04 00:17:12,010 - INFO - console_ui - Exportando gen en TXT-UTF8
+2025-03-04 00:17:12,014 - INFO - root - Exportando gen en JSON
+2025-03-04 00:17:12,014 - INFO - console_ui - Exportando gen en JSON
+2025-03-04 00:17:12,018 - INFO - root - Exportando gen en XML
+2025-03-04 00:17:12,018 - INFO - console_ui - Exportando gen en XML
+2025-03-04 00:17:12,018 - ERROR - root - Error exportando gen a XML: no such table: gen
+2025-03-04 00:17:12,018 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: gen
+
+2025-03-04 00:17:12,018 - ERROR - console_ui - Error exportando a XML: no such table: gen
+2025-03-04 00:17:12,018 - INFO - root - Limpiando archivos temporales de gen
+2025-03-04 00:17:12,030 - INFO - console_ui - Archivos generados para gen
+2025-03-04 00:17:12,031 - INFO - root - Exportando kit en CSV-UTF8
+2025-03-04 00:17:12,031 - INFO - console_ui - Exportando kit en CSV-UTF8
+2025-03-04 00:17:12,035 - INFO - root - Exportando kit en CSV-CP1252
+2025-03-04 00:17:12,035 - INFO - console_ui - Exportando kit en CSV-CP1252
+2025-03-04 00:17:12,038 - INFO - root - Exportando kit en ODS
+2025-03-04 00:17:12,038 - INFO - console_ui - Exportando kit en ODS
+2025-03-04 00:17:12,040 - INFO - root - Exportando kit en TXT-UTF8
+2025-03-04 00:17:12,040 - INFO - console_ui - Exportando kit en TXT-UTF8
+2025-03-04 00:17:12,045 - INFO - root - Exportando kit en JSON
+2025-03-04 00:17:12,045 - INFO - console_ui - Exportando kit en JSON
+2025-03-04 00:17:12,048 - INFO - root - Exportando kit en XML
+2025-03-04 00:17:12,048 - INFO - console_ui - Exportando kit en XML
+2025-03-04 00:17:12,049 - ERROR - root - Error exportando kit a XML: no such table: kit
+2025-03-04 00:17:12,049 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: kit
+
+2025-03-04 00:17:12,049 - ERROR - console_ui - Error exportando a XML: no such table: kit
+2025-03-04 00:17:12,049 - INFO - root - Limpiando archivos temporales de kit
+2025-03-04 00:17:12,061 - INFO - console_ui - Archivos generados para kit
+2025-03-04 00:17:12,061 - INFO - root - Exportando mam en CSV-UTF8
+2025-03-04 00:17:12,061 - INFO - console_ui - Exportando mam en CSV-UTF8
+2025-03-04 00:17:12,065 - INFO - root - Exportando mam en CSV-CP1252
+2025-03-04 00:17:12,065 - INFO - console_ui - Exportando mam en CSV-CP1252
+2025-03-04 00:17:12,067 - INFO - root - Exportando mam en ODS
+2025-03-04 00:17:12,067 - INFO - console_ui - Exportando mam en ODS
+2025-03-04 00:17:12,070 - INFO - root - Exportando mam en TXT-UTF8
+2025-03-04 00:17:12,070 - INFO - console_ui - Exportando mam en TXT-UTF8
+2025-03-04 00:17:12,074 - INFO - root - Exportando mam en JSON
+2025-03-04 00:17:12,074 - INFO - console_ui - Exportando mam en JSON
+2025-03-04 00:17:12,078 - INFO - root - Exportando mam en XML
+2025-03-04 00:17:12,078 - INFO - console_ui - Exportando mam en XML
+2025-03-04 00:17:12,078 - ERROR - root - Error exportando mam a XML: no such table: mam
+2025-03-04 00:17:12,078 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: mam
+
+2025-03-04 00:17:12,078 - ERROR - console_ui - Error exportando a XML: no such table: mam
+2025-03-04 00:17:12,078 - INFO - root - Limpiando archivos temporales de mam
+2025-03-04 00:17:12,090 - INFO - console_ui - Archivos generados para mam
+2025-03-04 00:17:12,090 - INFO - root - Exportando mat en CSV-UTF8
+2025-03-04 00:17:12,090 - INFO - console_ui - Exportando mat en CSV-UTF8
+2025-03-04 00:17:12,094 - INFO - root - Exportando mat en CSV-CP1252
+2025-03-04 00:17:12,094 - INFO - console_ui - Exportando mat en CSV-CP1252
+2025-03-04 00:17:12,096 - INFO - root - Exportando mat en ODS
+2025-03-04 00:17:12,096 - INFO - console_ui - Exportando mat en ODS
+2025-03-04 00:17:12,099 - INFO - root - Exportando mat en TXT-UTF8
+2025-03-04 00:17:12,099 - INFO - console_ui - Exportando mat en TXT-UTF8
+2025-03-04 00:17:12,103 - INFO - root - Exportando mat en JSON
+2025-03-04 00:17:12,103 - INFO - console_ui - Exportando mat en JSON
+2025-03-04 00:17:12,107 - INFO - root - Exportando mat en XML
+2025-03-04 00:17:12,107 - INFO - console_ui - Exportando mat en XML
+2025-03-04 00:17:12,107 - ERROR - root - Error exportando mat a XML: no such table: mat
+2025-03-04 00:17:12,107 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: mat
+
+2025-03-04 00:17:12,107 - ERROR - console_ui - Error exportando a XML: no such table: mat
+2025-03-04 00:17:12,107 - INFO - root - Limpiando archivos temporales de mat
+2025-03-04 00:17:12,118 - INFO - console_ui - Archivos generados para mat
+2025-03-04 00:17:12,118 - INFO - root - Exportando tit en CSV-UTF8
+2025-03-04 00:17:12,119 - INFO - console_ui - Exportando tit en CSV-UTF8
+2025-03-04 00:17:12,123 - INFO - root - Exportando tit en CSV-CP1252
+2025-03-04 00:17:12,123 - INFO - console_ui - Exportando tit en CSV-CP1252
+2025-03-04 00:17:12,125 - INFO - root - Exportando tit en ODS
+2025-03-04 00:17:12,125 - INFO - console_ui - Exportando tit en ODS
+2025-03-04 00:17:12,128 - INFO - root - Exportando tit en TXT-UTF8
+2025-03-04 00:17:12,128 - INFO - console_ui - Exportando tit en TXT-UTF8
+2025-03-04 00:17:12,132 - INFO - root - Exportando tit en JSON
+2025-03-04 00:17:12,132 - INFO - console_ui - Exportando tit en JSON
+2025-03-04 00:17:12,135 - INFO - root - Exportando tit en XML
+2025-03-04 00:17:12,135 - INFO - console_ui - Exportando tit en XML
+2025-03-04 00:17:12,136 - ERROR - root - Error exportando tit a XML: no such table: tit
+2025-03-04 00:17:12,136 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/create_files.py", line 202, in export_xml_2
+    count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: tit
+
+2025-03-04 00:17:12,136 - ERROR - console_ui - Error exportando a XML: no such table: tit
+2025-03-04 00:17:12,136 - INFO - root - Limpiando archivos temporales de tit
+2025-03-04 00:17:12,147 - INFO - console_ui - Archivos generados para tit
+2025-03-04 00:17:12,147 - INFO - console_ui - Todos los archivos generados correctamente
+2025-03-04 00:17:20,232 - INFO - root - Iniciando descarga de 1 archivos
+2025-03-04 00:17:20,288 - INFO - root - Descargando GRAFPRO
+2025-03-04 00:17:20,288 - INFO - console_ui - Descargando GRAFPRO...
+2025-03-04 00:17:34,952 - INFO - root - Programa interrumpido por el usuario
+2025-03-04 00:17:43,317 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 00:17:43
+2025-03-04 00:17:46,113 - INFO - root - Iniciando descarga de 1 archivos
+2025-03-04 00:17:46,176 - INFO - root - Descargando GRAFPRO
+2025-03-04 00:17:46,176 - INFO - console_ui - Descargando GRAFPRO...
+2025-03-04 00:17:46,278 - INFO - root - Descarga completada: GRAFPRO
+2025-03-04 00:17:46,278 - INFO - console_ui - Descarga completada: GRAFPRO
+2025-03-04 00:17:46,280 - INFO - root - Resumen de descarga: Total=1, Omitidos=0, Fallidos=0
+2025-03-04 00:17:46,280 - INFO - root - Iniciando inserción de datos para 1 datasets
+2025-03-04 00:17:46,280 - INFO - root - Iniciando procesamiento del dataset grp
+2025-03-04 00:17:46,293 - ERROR - root - Error procesando dataset grp: can only concatenate str (not "NoneType") to str
+2025-03-04 00:17:46,296 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/main.py", line 278, in insertion
+    data_row = extract_values(dataset, record_dict)
+  File "/Users/pole/Projects/bne-api/converter/humanizer.py", line 1383, in extract_values
+    humans.append(son_serie(record.get("440"), record.get("490")))
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pole/Projects/bne-api/converter/humanizer.py", line 14, in inner
+    result = f(*args)
+  File "/Users/pole/Projects/bne-api/converter/humanizer.py", line 2894, in son_serie
+    result += d_a
+TypeError: can only concatenate str (not "NoneType") to str
+
+2025-03-04 00:17:46,296 - ERROR - console_ui - Error procesando dataset grp: can only concatenate str (not "NoneType") to str
+2025-03-04 00:18:04,077 - INFO - root - Iniciando descarga de 1 archivos
+2025-03-04 00:18:04,134 - INFO - root - Descargando GRABSONORA
+2025-03-04 00:18:04,134 - INFO - console_ui - Descargando GRABSONORA...
+2025-03-04 00:18:10,925 - INFO - root - Programa interrumpido por el usuario
+2025-03-04 00:18:15,717 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 00:18:15
+2025-03-04 00:18:26,336 - INFO - root - Iniciando descarga de 1 archivos
+2025-03-04 00:18:26,397 - INFO - root - Omitiendo GRAFNOPRO - no ha cambiado desde la última descarga
+2025-03-04 00:18:26,397 - INFO - console_ui - Omitiendo GRAFNOPRO - no ha cambiado
+2025-03-04 00:18:26,398 - INFO - root - Resumen de descarga: Total=1, Omitidos=1, Fallidos=0
+2025-03-04 00:18:26,398 - INFO - root - Iniciando inserción de datos para 1 datasets
+2025-03-04 00:18:26,399 - INFO - root - Iniciando procesamiento del dataset gra
+2025-03-04 00:18:27,099 - INFO - root - Dataset gra: 7464 registros procesados
+2025-03-04 00:18:27,099 - INFO - console_ui - Dataset gra: 7464 registros procesados
+2025-03-04 00:18:37,619 - INFO - root - Iniciando descarga de 1 archivos
+2025-03-04 00:18:37,672 - INFO - root - Descargando RECELECTRO
+2025-03-04 00:18:37,672 - INFO - console_ui - Descargando RECELECTRO...
+2025-03-04 00:18:39,558 - INFO - root - Descarga completada: RECELECTRO
+2025-03-04 00:18:39,558 - INFO - console_ui - Descarga completada: RECELECTRO
+2025-03-04 00:18:39,562 - INFO - root - Resumen de descarga: Total=1, Omitidos=0, Fallidos=0
+2025-03-04 00:18:39,562 - INFO - root - Iniciando inserción de datos para 1 datasets
+2025-03-04 00:18:39,564 - INFO - root - Iniciando procesamiento del dataset ele
+2025-03-04 00:18:39,650 - ERROR - root - Error procesando dataset ele: can only concatenate str (not "NoneType") to str
+2025-03-04 00:18:39,652 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/main.py", line 278, in insertion
+    data_row = extract_values(dataset, record_dict)
+  File "/Users/pole/Projects/bne-api/converter/humanizer.py", line 965, in extract_values
+    humans.append(son_serie(record.get("440"), record.get("490")))
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pole/Projects/bne-api/converter/humanizer.py", line 14, in inner
+    result = f(*args)
+  File "/Users/pole/Projects/bne-api/converter/humanizer.py", line 2894, in son_serie
+    result += d_a
+TypeError: can only concatenate str (not "NoneType") to str
+
+2025-03-04 00:18:39,652 - ERROR - console_ui - Error procesando dataset ele: can only concatenate str (not "NoneType") to str
+2025-03-04 00:20:34,272 - INFO - console_ui - Gracias por utilizar BNE Converter. ¡Hasta pronto!
+2025-03-04 00:38:33,720 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 00:38:33
+2025-03-04 00:38:53,646 - INFO - root - Iniciando descarga de 1 archivos
+2025-03-04 00:38:53,715 - INFO - root - Omitiendo GRAFNOPRO - no ha cambiado desde la última descarga
+2025-03-04 00:38:53,715 - INFO - console_ui - Omitiendo GRAFNOPRO - no ha cambiado
+2025-03-04 00:38:53,716 - INFO - root - Resumen de descarga: Total=1, Omitidos=1, Fallidos=0
+2025-03-04 00:38:53,716 - INFO - root - Iniciando inserción de datos para 1 datasets
+2025-03-04 00:38:53,718 - INFO - root - Iniciando procesamiento del dataset gra
+2025-03-04 00:38:54,517 - INFO - root - Dataset gra: 7464 registros procesados
+2025-03-04 00:38:54,518 - INFO - console_ui - Dataset gra: 7464 registros procesados
+2025-03-04 00:39:43,054 - INFO - console_ui - Cerrando BNE Converter.
+2025-03-04 00:39:45,210 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 00:39:45
+2025-03-04 00:39:57,095 - INFO - console_ui - Cerrando BNE Converter.
+2025-03-04 00:39:59,048 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 00:39:59
+2025-03-04 00:40:33,240 - INFO - console_ui - Cerrando BNE Converter.
+2025-03-04 00:40:34,531 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 00:40:34
+2025-03-04 00:41:26,114 - INFO - root - Iniciando descarga de 1 archivos
+2025-03-04 00:41:26,216 - INFO - root - Descargando MUSICAESC
+2025-03-04 00:41:26,216 - INFO - console_ui - Descargando MUSICAESC...
+2025-03-04 00:41:32,701 - INFO - root - Programa interrumpido por el usuario
+2025-03-04 00:41:34,426 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 00:41:34
+2025-03-04 00:41:44,551 - ERROR - console_ui - Por favor, ingrese un número válido
+2025-03-04 00:41:47,901 - INFO - console_ui - Cerrando BNE Converter.
+2025-03-04 00:41:49,866 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 00:41:49
+2025-03-04 00:42:32,047 - ERROR - console_ui - Por favor, ingrese un número válido
+2025-03-04 00:42:41,952 - ERROR - console_ui - Por favor, ingrese un número válido
+2025-03-04 00:42:44,251 - INFO - console_ui - Cerrando BNE Converter.
+2025-03-04 00:42:45,986 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 00:42:45
+2025-03-04 00:43:34,819 - ERROR - console_ui - Por favor, ingrese un número válido
+2025-03-04 00:43:36,157 - INFO - console_ui - Cerrando BNE Converter.
+2025-03-04 00:43:37,714 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 00:43:37
+2025-03-04 00:43:55,366 - ERROR - console_ui - Por favor, ingrese un número válido
+2025-03-04 00:43:58,612 - INFO - console_ui - Cerrando BNE Converter.
+2025-03-04 00:43:59,511 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 00:43:59
+2025-03-04 00:48:47,692 - ERROR - console_ui - Por favor, ingrese un número válido
+2025-03-04 00:48:49,147 - INFO - console_ui - Cerrando BNE Converter.
+2025-03-04 00:48:51,576 - INFO - root - Iniciando sesión de BNE Converter - 2025-03-04 00:48:51
+2025-03-04 00:51:13,394 - INFO - root - Iniciando descarga de 1 archivos
+2025-03-04 00:51:13,449 - INFO - root - Descargando GRAFPRO
+2025-03-04 00:51:13,450 - INFO - console_ui - Descargando GRAFPRO...
+2025-03-04 00:51:13,572 - INFO - root - Descarga completada: GRAFPRO
+2025-03-04 00:51:13,572 - INFO - console_ui - Descarga completada: GRAFPRO
+2025-03-04 00:51:13,574 - INFO - root - Resumen de descarga: Total=1, Omitidos=0, Fallidos=0
+2025-03-04 00:51:13,574 - INFO - root - Iniciando inserción de datos para 1 datasets
+2025-03-04 00:51:13,575 - INFO - root - Iniciando procesamiento del dataset grp
+2025-03-04 00:51:13,587 - ERROR - root - Error procesando dataset grp: can only concatenate str (not "NoneType") to str
+2025-03-04 00:51:13,591 - ERROR - root - Traceback (most recent call last):
+  File "/Users/pole/Projects/bne-api/converter/main.py", line 278, in insertion
+    data_row = extract_values(dataset, record_dict)
+  File "/Users/pole/Projects/bne-api/converter/humanizer.py", line 1383, in extract_values
+    humans.append(son_serie(record.get("440"), record.get("490")))
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pole/Projects/bne-api/converter/humanizer.py", line 14, in inner
+    result = f(*args)
+  File "/Users/pole/Projects/bne-api/converter/humanizer.py", line 2894, in son_serie
+    result += d_a
+TypeError: can only concatenate str (not "NoneType") to str
+
+2025-03-04 00:51:13,592 - ERROR - console_ui - Error procesando dataset grp: can only concatenate str (not "NoneType") to str
+2025-03-04 00:51:19,078 - INFO - root - Iniciando descarga de 1 archivos
+2025-03-04 00:51:19,133 - INFO - root - Omitiendo GRAFNOPRO - no ha cambiado desde la última descarga
+2025-03-04 00:51:19,133 - INFO - console_ui - Omitiendo GRAFNOPRO - no ha cambiado
+2025-03-04 00:51:19,134 - INFO - root - Resumen de descarga: Total=1, Omitidos=1, Fallidos=0
+2025-03-04 00:51:19,134 - INFO - root - Iniciando inserción de datos para 1 datasets
+2025-03-04 00:51:19,135 - INFO - root - Iniciando procesamiento del dataset gra
+2025-03-04 00:51:19,833 - INFO - root - Dataset gra: 7464 registros procesados
+2025-03-04 00:51:19,833 - INFO - console_ui - Dataset gra: 7464 registros procesados
