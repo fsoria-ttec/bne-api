@@ -202,7 +202,7 @@ def insertion(datasets):
                 query = f"INSERT OR IGNORE INTO {dataset} VALUES ({placeholders[:-2]})"
                 
                 # Procesar registros en lotes
-                batch_size = 1000
+                batch_size = CONFIG.get('batch_size', 1000)
                 record_count = 0
                 batch = []
                 
