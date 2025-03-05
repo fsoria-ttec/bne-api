@@ -25,7 +25,7 @@ from models import create_statements
 from humanizer import *
 from constants import *
 from utils import ejecutar_comando
-from ckan import actualizar_CKAN
+from ckan import actualizar_fecha_ckan, actualizar_CKAN
 from configs import CONFIG
 from tqdm import tqdm
 
@@ -301,7 +301,15 @@ def main():
                 if get_files(urls):
                     # Procesar e insertar datos
                     if insertion(datasets):
-                        # Actualizar CKAN
+                        # Siempre actualizar fecha de modificación
+                        try:
+                            actualizar_fecha_ckan(datasets)
+                            ui.show_info("Fecha de modificación en CKAN actualizada")
+                        except Exception as e:
+                            logger.error(f"Error actualizando fecha en CKAN: {str(e)}")
+                            ui.show_error(f"Error actualizando fecha en CKAN: {str(e)}")
+    
+                        # Preguntar si actualizar todos los metadatos               
                         if ui.show_confirmation("¿Desea actualizar el catálogo CKAN?"):
                             try:
                                 actualizar_CKAN(datasets)
@@ -333,7 +341,14 @@ def main():
                     if get_files((urls[user],)):
                         # Procesar dataset específico
                         dataset_dict = {dataset: list(datasets.values())[user]}
-                        if insertion(dataset_dict):
+                        if insertion(dataset_dict):    # Siempre actualizar fecha de modificación
+                            try:
+                                actualizar_fecha_ckan(dataset_dict)
+                                ui.show_info("Fecha de modificación en CKAN actualizada")
+                            except Exception as e:
+                                logger.error(f"Error actualizando fecha en CKAN: {str(e)}")
+                                ui.show_error(f"Error actualizando fecha en CKAN: {str(e)}")
+
                             # Actualizar CKAN
                             if ui.show_confirmation("¿Desea actualizar el catálogo CKAN?"):
                                 try:
