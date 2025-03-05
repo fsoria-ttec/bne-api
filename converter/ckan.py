@@ -7,6 +7,7 @@ from tqdm import tqdm
 from datetime import datetime
 from constants import dataset_titles
 from configs import CONFIG_FILE
+from logging_config import setup_logging
 
 load_dotenv()
 
@@ -64,6 +65,67 @@ def cargar_configuracion():
         print(f"Error al cargar configuración: {e}")
         print("Usando configuración predeterminada")
         return config_predeterminada
+
+def actualizar_fecha_ckan(datasets):
+    """
+    Actualiza SOLO la fecha de última modificación de los datasets en CKAN
+    sin alterar ningún otro metadato.
+    
+    Args:
+        datasets (dict): Diccionario con los nombres de los datasets a actualizar
+    """
+    # Cargar configuración desde el archivo JSON
+    config = cargar_configuracion()
+    logger = setup_logging()
+    
+    try:
+        session = req.Session()
+        session.headers.update({
+            'Authorization': API_KEY,
+            'Content-Type': 'application/json'
+        })
+        
+        for dataset_name, mrc_file in datasets.items():
+            dataset_id = dataset_name[:3]  
+            
+            logger.info(f"Actualizando fecha de modificación para dataset: {dataset_id}")
+            
+            # Verificar si el dataset ya existe en CKAN
+            check_url = f"{CKAN_URL}/api/3/action/package_show"
+            try:
+                response = session.get(f"{check_url}?id={dataset_id}", verify=False)
+                dataset_exists = response.status_code == 200
+                
+                if dataset_exists:
+                    existing_dataset = response.json().get('result', {})
+                    
+                    # Si el dataset existe, solo actualizar la fecha de modificación
+                    if 'id' in existing_dataset:
+                        update_url = f"{CKAN_URL}/api/3/action/package_patch"
+                        dataset_data = {'id': existing_dataset['id']}
+                        
+                        try:
+                            with tqdm(total=1, desc=f"Actualizando fecha en CKAN", unit="dataset") as pbar:
+                                response = session.post(update_url, json=dataset_data, verify=False)
+                                response.raise_for_status()
+                                pbar.update(1)
+                            
+                            logger.info(f"Fecha de modificación actualizada para dataset {dataset_id}")
+                            
+                        except Exception as e:
+                            logger.error(f"Error actualizando fecha para dataset {dataset_id}: {e}")
+                            continue
+                else:
+                    logger.warning(f"El dataset {dataset_id} no existe en CKAN, no se puede actualizar la fecha")
+                
+            except Exception as e:
+                logger.error(f"Error al verificar existencia del dataset {dataset_id}: {e}")
+                continue
+                
+    except Exception as e:
+        logger.error(f"Error general al actualizar fechas en CKAN: {e}")
+        
+    return
 
 def actualizar_CKAN(datasets):
     """
