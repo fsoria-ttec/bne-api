@@ -11,7 +11,6 @@ import sqlite3
 import re
 import json
 import traceback
-import time
 import concurrent.futures
 
 # Verificar directorio de base de datos
@@ -27,6 +26,7 @@ from humanizer import *
 from constants import *
 from utils import ejecutar_comando
 from ckan import actualizar_CKAN
+from configs import CONFIG
 from tqdm import tqdm
 
 # Importar los nuevos módulos
@@ -59,27 +59,22 @@ def get_files(urls):
     Descarga archivos MARC21 solo si han sido modificados desde la última descarga
     """
     logger.info(f"Iniciando descarga de {len(urls)} archivos")
-    
+
+    # Obtener la ruta configurada para archivos MARC
+    mrcs_path = CONFIG.get("mrcs_path", "./mrcs")   
+
     # Crear directorio para archivos descargados si no existe
-    if not os.path.exists("mrcs"):
-        os.makedirs("mrcs")
-        logger.debug("Directorio 'mrcs' creado")
+    if not os.path.exists(mrcs_path):
+        os.makedirs(mrcs_path)
+        logger.debug(f"Directorio '{mrcs_path}' creado")
     
-    # Archivo para almacenar información de archivos
-    file_info_path = "mrcs/file_info.json"
-    
-    # Cargar información existente o crear diccionario vacío
-    if os.path.exists(file_info_path):
-        try:
-            with open(file_info_path, 'r') as f:
-                file_info = json.load(f)
-                logger.debug(f"Archivo de información cargado: {file_info_path}")
-        except Exception as e:
-            logger.warning(f"Error al cargar archivo de información: {str(e)}")
-            file_info = {}
-    else:
-        file_info = {}
-        logger.debug("No se encontró archivo de información previo")
+    # Cargar timestamps existentes o crear diccionario vacío
+    last_modified_file = os.path.join(mrcs_path, "last_modified.json")
+    try:
+        with open(last_modified_file, 'r') as f:
+            last_modified_data = json.load(f)
+    except Exception:
+        last_modified_data = {}
     
     failed_downloads = []
     skipped_files = []
@@ -87,115 +82,64 @@ def get_files(urls):
     with concurrent.futures.ThreadPoolExecutor() as executor:
         def download(url):
             try:
-                logger.debug(f"Verificando {url}")
                 z_file_name = re.findall(r"/([^/]+)-mrc_new\.mrc", url)[0]
-                file_path = f"mrcs/{z_file_name}-mrc_new.mrc"
+                file_path = f"{mrcs_path}/{z_file_name}-mrc_new.mrc"
                 
-                # Verificar si el archivo ha cambiado usando una solicitud HEAD
-                file_changed = True
-                skip_reason = None
+                # Iniciar solicitud GET con streaming para verificar
+                res = req.get(url, verify=False, stream=True, timeout=30)
+                current_modified = res.headers.get('Last-Modified')
                 
-                if os.path.exists(file_path):
-                    try:
-                        # Solicitud HEAD para obtener metadatos (ligera)
-                        head_response = req.head(url, verify=False, timeout=30)
-                        head_response.raise_for_status()
-                        
-                        # Verificación por tamaño
-                        remote_size = int(head_response.headers.get('Content-Length', '0'))
-                        local_size = os.path.getsize(file_path)
-                        
-                        if remote_size > 0 and local_size == remote_size:
-                            # Verificación por Last-Modified
-                            current_modified = head_response.headers.get('Last-Modified')
-                            stored_modified = file_info.get(z_file_name, {}).get('modified')
-                            
-                            if current_modified and stored_modified and current_modified == stored_modified:
-                                file_changed = False
-                                skip_reason = "Last-Modified"
-                            else:
-                                # Verificar por tiempo mínimo entre actualizaciones
-                                last_check = file_info.get(z_file_name, {}).get('last_check', 0)
-                                min_hours = 24  # Tiempo mínimo entre verificaciones
-                                
-                                if last_check and (time.time() - last_check < min_hours * 3600):
-                                    file_changed = False
-                                    skip_reason = "tiempo mínimo entre verificaciones"
-                    
-                    except Exception as e:
-                        logger.warning(f"Error verificando cambios en {z_file_name}: {str(e)}")
-                        # Si falla la verificación, asumimos que ha cambiado por seguridad
-                
-                # Si no ha cambiado, omitir descarga
-                if not file_changed:
-                    logger.info(f"Omitiendo {z_file_name} - no ha cambiado (verificado por {skip_reason})")
+                # Verificar si el archivo ya existe y no ha cambiado
+                if (z_file_name in last_modified_data and 
+                    current_modified and
+                    current_modified == last_modified_data[z_file_name] and
+                    os.path.exists(file_path)):
+                    logger.info(f"Omitiendo {z_file_name} - no ha cambiado")
                     ui.show_info(f"Omitiendo {z_file_name} - no ha cambiado")
                     skipped_files.append(z_file_name)
                     return
                 
-                # Si ha cambiado o no existe, descargarlo
+                # Si el archivo ha cambiado o no existe, descargarlo
                 logger.info(f"Descargando {z_file_name}")
                 ui.show_info(f"Descargando {z_file_name}...")
                 
-                # Una sola solicitud GET para descargar el archivo
-                response = req.get(url, verify=False, stream=True, timeout=60)
-                response.raise_for_status()
-                
-                # Guardar el archivo
-                total_size = int(response.headers.get('content-length', 0))
+                # Usar la misma conexión para descargar el archivo
+                total_size = int(res.headers.get('content-length', 0))
                 
                 with open(file_path, "wb") as z_file:
                     with tqdm(total=total_size, unit='B', unit_scale=True, 
                              desc=f"Descargando {z_file_name}") as pbar:
-                        for chunk in response.iter_content(chunk_size=8192):
+                        for chunk in res.iter_content(chunk_size=8192):
                             if chunk:
                                 z_file.write(chunk)
                                 pbar.update(len(chunk))
                 
-                # Actualizar información del archivo
-                file_info[z_file_name] = {
-                    'modified': response.headers.get('Last-Modified'),
-                    'size': total_size,
-                    'last_check': time.time()
-                }
-                
-                # Guardar información actualizada
-                with open(file_info_path, 'w') as f:
-                    json.dump(file_info, f, indent=2)
+                # Guardar el timestamp para futuras verificaciones
+                if current_modified:
+                    last_modified_data[z_file_name] = current_modified
+                    with open(last_modified_file, 'w') as f:
+                        json.dump(last_modified_data, f, indent=2)
                 
                 logger.info(f"Descarga completada: {z_file_name}")
                 ui.show_success(f"Descarga completada: {z_file_name}")
                 
             except Exception as e:
-                error_msg = f"Error al descargar {url}: {str(e)}"
-                logger.error(error_msg)
-                ui.show_error(error_msg)
+                logger.error(f"Error al descargar {url}: {str(e)}")
+                ui.show_error(f"Error al descargar {url}: {str(e)}")
                 failed_downloads.append(url)
         
-        # Crear tareas de descarga
-        futures = []
-        for url in urls:
-            futures.append(executor.submit(download, url))
-        
-        # Esperar a que todas terminen
-        for future in concurrent.futures.as_completed(futures):
-            try:
-                future.result()  # Obtener resultado (o excepción)
-            except Exception as e:
-                logger.error(f"Error en tarea de descarga: {str(e)}")
+        # Ejecutar descargas en paralelo
+        futures = [executor.submit(download, url) for url in urls]
+        concurrent.futures.wait(futures)
     
     # Mostrar resumen
-    logger.info(f"Resumen de descarga: Total={len(urls)}, Omitidos={len(skipped_files)}, Fallidos={len(failed_downloads)}")
+    logger.info(f"Resumen: Total={len(urls)}, Omitidos={len(skipped_files)}, Fallidos={len(failed_downloads)}")
     
-    if failed_downloads:
-        logger.warning(f"{len(failed_downloads)} archivos no se pudieron descargar")
-        ui.show_warning(f"{len(failed_downloads)} archivos no se pudieron descargar")
-        
-        if ui.show_confirmation("¿Desea reintentar las descargas fallidas?"):
-            logger.info("Reintentando descargas fallidas")
-            get_files(failed_downloads)
+    if failed_downloads and ui.show_confirmation("¿Desea reintentar las descargas fallidas?"):
+        get_files(failed_downloads)
     
     return len(failed_downloads) == 0
+
 def insertion(datasets):
     """
     Procesa los archivos MARC y los inserta en la base de datos
@@ -226,7 +170,7 @@ def insertion(datasets):
     for dataset_key, mrc_file in datasets.items():
         dataset = dataset_key[:3]
         
-        ui.print_section(f"Procesando dataset: {dataset}")
+        ui.show_info(f"Procesando dataset: {dataset}")
         logger.info(f"Iniciando procesamiento del dataset {dataset}")
         
         try:
@@ -238,7 +182,7 @@ def insertion(datasets):
             logger.debug(f"Tabla {dataset} creada")
             
             # Procesar archivo MRC
-            marc_file_path = f"mrcs/{mrc_file}-mrc_new.mrc"
+            marc_file_path = f"{CONFIG.get('mrcs_path', './mrcs')}/{mrc_file}-mrc_new.mrc"
             
             if not os.path.exists(marc_file_path):
                 error_msg = f"Archivo no encontrado: {marc_file_path}"
@@ -494,7 +438,7 @@ def main():
             
             ui.wait_for_keypress()
         
-        elif choice == 6:  # Salir
+        elif choice == 0:  # Salir
             user_choice = "q"
             ui.show_info("Cerrando BNE Converter.")
 

@@ -6,7 +6,6 @@ Módulo de interfaz de consola para BNE Converter
 """
 
 import os
-import sys
 import logging
 from colorama import init, Fore, Style, Back
 
@@ -55,11 +54,12 @@ class ConsoleUI:
             "Generar archivos para todos los datasets",
             "Generar archivos para dataset específico",
             "Actualizar CKAN",
-            "Salir"
         ]
         
         for i, option in enumerate(options, 1):
             print(f"{Fore.YELLOW}{i}.{Style.RESET_ALL} {option}")
+        print()
+        print(f"{Fore.YELLOW}{0}.{Style.RESET_ALL} Salir")
         
         self.print_footer()
         
@@ -71,7 +71,7 @@ class ConsoleUI:
                     return len(options)  # Opción de salir
                 
                 choice = int(choice)
-                if 1 <= choice <= len(options):
+                if 0 <= choice <= len(options):
                     return choice
                 print(f"{Fore.RED}Opción inválida. Intente nuevamente.{Style.RESET_ALL}")
             except ValueError:
