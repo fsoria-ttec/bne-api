@@ -2891,13 +2891,15 @@ def son_serie(value_440: str, value_490: str) -> str:
     result = ""
     if value_440:
         d_a = get_single_dollar(value_440, "a")
-        result += d_a
+        if d_a:  # Verificar que d_a no sea None
+            result += d_a
         d_v = get_single_dollar(value_440, "v")
         if d_v:
             result += d_v
         if value_490:
             d_a = get_single_dollar(value_490, "a")
-            result += d_a
+            if d_a:  # Verificar que d_a no sea None
+                result += d_a
             d_v = get_single_dollar(value_490, "v")
             if d_v:
                 result += d_v
