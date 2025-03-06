@@ -13,9 +13,10 @@ load_dotenv()
 
 CONFIG_FILE = Path(__file__).resolve().parent / "bne_config.json"
 
-API_KEY = os.getenv("BNE_API_KEY", "")
-CKAN_URL = os.getenv("BNE_CKAN_URL", "http://svjc-des-ckan.ttec.es:84/catalogo")
-API_BASE_URL = os.getenv("BNE_API_BASE_URL", "http://svjc-des-bne.ttec.es:3000/api")
+# Variables de entorno como respaldo
+ENV_API_KEY = os.getenv("BNE_API_KEY", "")
+ENV_CKAN_URL = os.getenv("BNE_CKAN_URL", "http://svjc-des-ckan.ttec.es:84/catalogo")
+ENV_API_BASE_URL = os.getenv("BNE_API_BASE_URL", "http://svjc-des-bne.ttec.es:3000/api")
 
 def cargar_configuracion():
     """
@@ -78,10 +79,19 @@ def actualizar_fecha_ckan(datasets):
     config = cargar_configuracion()
     logger = setup_logging()
     
+    # Usar la API_KEY del archivo de configuración, si existe
+    api_key = config.get("api_key", ENV_API_KEY)
+    ckan_url = config.get("ckan_url", ENV_CKAN_URL)
+    
+    # Verificar que la API_KEY está configurada
+    if not api_key:
+        logger.error("Error: API_KEY no configurada. Configure la API_KEY con configs-tool.py o establezca la variable de entorno BNE_API_KEY")
+        return
+    
     try:
         session = req.Session()
         session.headers.update({
-            'Authorization': API_KEY,
+            'Authorization': api_key,
             'Content-Type': 'application/json'
         })
         
@@ -91,7 +101,7 @@ def actualizar_fecha_ckan(datasets):
             logger.info(f"Actualizando fecha de modificación para dataset: {dataset_id}")
             
             # Verificar si el dataset ya existe en CKAN
-            check_url = f"{CKAN_URL}/api/3/action/package_show"
+            check_url = f"{ckan_url}/api/3/action/package_show"
             try:
                 response = session.get(f"{check_url}?id={dataset_id}", verify=False)
                 dataset_exists = response.status_code == 200
@@ -101,12 +111,14 @@ def actualizar_fecha_ckan(datasets):
                     
                     # Si el dataset existe, solo actualizar la fecha de modificación
                     if 'id' in existing_dataset:
-                        update_url = f"{CKAN_URL}/api/3/action/package_update"
+                        update_url = f"{ckan_url}/api/3/action/package_update"
                         dataset_data = {'id': existing_dataset['id']}
                         
                         try:
                             with tqdm(total=1, desc=f"Actualizando fecha en CKAN", unit="dataset") as pbar:
                                 response = session.post(update_url, json=dataset_data, verify=False)
+                                if response.status_code != 200:
+                                    logger.error(f"Error HTTP {response.status_code}: {response.text}")
                                 response.raise_for_status()
                                 pbar.update(1)
                             
@@ -138,10 +150,20 @@ def actualizar_CKAN(datasets):
     config = cargar_configuracion()
     logger = setup_logging()
     
+    # Usar la API_KEY del archivo de configuración, si existe
+    api_key = config.get("api_key", ENV_API_KEY)
+    ckan_url = config.get("ckan_url", ENV_CKAN_URL)
+    api_base_url = config.get("api_base_url", ENV_API_BASE_URL)
+    
+    # Verificar que la API_KEY está configurada
+    if not api_key:
+        logger.error("Error: API_KEY no configurada. Configure la API_KEY con configs-tool.py o establezca la variable de entorno BNE_API_KEY")
+        return
+    
     try:
         session = req.Session()
         session.headers.update({
-            'Authorization': API_KEY,
+            'Authorization': api_key,
             'Content-Type': 'application/json'
         })
         
@@ -151,7 +173,7 @@ def actualizar_CKAN(datasets):
             logger.info(f"Procesando dataset: {dataset_id}")
             
             # Verificar si el dataset ya existe en CKAN
-            check_url = f"{CKAN_URL}/api/3/action/package_show"
+            check_url = f"{ckan_url}/api/3/action/package_show"
             try:
                 response = session.get(f"{check_url}?id={dataset_id}", verify=False)
                 dataset_exists = response.status_code == 200
@@ -178,7 +200,7 @@ def actualizar_CKAN(datasets):
             formats = config["formatos_exportacion"]
             
             for fmt in formats:
-                url = f"{API_BASE_URL}/{dataset_id}.{fmt['extension']}"
+                url = f"{api_base_url}/{dataset_id}.{fmt['extension']}"
                 
                 # Comprobar si el recurso ya existe (por URL)
                 existing_resource = None
@@ -245,16 +267,18 @@ def actualizar_CKAN(datasets):
             
             # Crear o actualizar el dataset
             if dataset_exists:
-                update_url = f"{CKAN_URL}/api/3/action/package_update"
+                update_url = f"{ckan_url}/api/3/action/package_update"
                 action = "actualizando"
             else:
-                update_url = f"{CKAN_URL}/api/3/action/package_create"
+                update_url = f"{ckan_url}/api/3/action/package_create"
                 action = "creando"
                 
             try:
                 with tqdm(total=1, desc=f"{action.capitalize()} dataset en CKAN", unit="dataset") as pbar:
                     print(dataset_data)
                     response = session.post(update_url, json=dataset_data, verify=False)
+                    if response.status_code != 200:
+                        logger.error(f"Error HTTP {response.status_code}: {response.text}")
                     response.raise_for_status()
                     pbar.update(1)
                 

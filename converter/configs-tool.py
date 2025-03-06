@@ -272,13 +272,21 @@ def configure_ckan():
     
     print(color_text("Configuración actual:", Fore.GREEN))
     api_key = CONFIG.get("api_key", "")
+    ckan_url = CONFIG.get("ckan_url", "")
+    api_base_url = CONFIG.get("api_base_url", "")
+    
     if api_key:
         masked_key = api_key[:4] + "*" * (len(api_key) - 8) + api_key[-4:] if len(api_key) > 8 else "****"
         print(f"API Key: {masked_key}")
     else:
         print("API Key: No configurada")
     
+    print(f"CKAN URL: {ckan_url if ckan_url else 'Valor predeterminado'}")
+    print(f"API Base URL: {api_base_url if api_base_url else 'Valor predeterminado'}")
+    
     print("\n1. Configurar API Key")
+    print("2. Configurar CKAN URL")
+    print("3. Configurar API URL")
     print()
     print("0. Volver")
     print()
@@ -294,6 +302,30 @@ def configure_ckan():
             print(color_text("\n✓ API Key configurada correctamente", Fore.GREEN))
         else:
             print(color_text("\nSe mantuvo la API Key actual", Fore.YELLOW))
+    
+    elif option == "2":
+        default_url = "http://svjc-des-ckan.ttec.es:84/catalogo"
+        current_url = CONFIG.get("ckan_url", default_url)
+        new_url = input(color_text(f"CKAN URL ({current_url}): ", Fore.GREEN))
+        
+        if new_url.strip():
+            CONFIG["ckan_url"] = new_url
+            save_config(CONFIG)
+            print(color_text("\n✓ CKAN URL configurada correctamente", Fore.GREEN))
+        else:
+            print(color_text("\nSe mantuvo la CKAN URL actual", Fore.YELLOW))
+    
+    elif option == "3":
+        default_url = "http://svjc-des-bne.ttec.es:3000/api"
+        current_url = CONFIG.get("api_base_url", default_url)
+        new_url = input(color_text(f"API Base URL ({current_url}): ", Fore.GREEN))
+        
+        if new_url.strip():
+            CONFIG["api_base_url"] = new_url
+            save_config(CONFIG)
+            print(color_text("\n✓ API Base URL configurada correctamente", Fore.GREEN))
+        else:
+            print(color_text("\nSe mantuvo la API Base URL actual", Fore.YELLOW))
     
     input("\nPresione ENTER para continuar...")
 
