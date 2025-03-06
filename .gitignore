@@ -1,15 +1,41 @@
-__pycache__
-instance/bne.db
+# Ignorar directorios de base de datos
+/dbs/
 *.db
-*.zip
-*.ods
-*.xml
-*.csv
-*.json
-*.mrc
-*.zip
+*.db-*
+*.db-journal
+
+# Ignorar logs
+/logs/
+*.log
+
+# Ignorar directorios de archivos generados
+/exports/
+/mrcs/
+
+# Ignorar archivos de configuración que puedan contener claves
+bne_config.json
+
+# Archivos temporales de Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Entornos virtuales
 .env
-.log
-venv
-config.*
+.venv
+env/
+venv/
+ENV/
+
+# Archivos del sistema operativo
 .DS_Store
+Thumbs.db
+
+# Archivos de editores
+.vscode/
+.idea/
+*.swp
+*.swo
