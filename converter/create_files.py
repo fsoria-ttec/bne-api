@@ -14,6 +14,7 @@ import logging
 from tqdm import tqdm
 from utils import ejecutar_comando
 from constants import *
+from configs import CONFIG
 
 # Importar configuración de logging si existe
 try:
@@ -33,7 +34,7 @@ except ImportError:
     ui_available = False
 
 # Definir la carpeta de exportación centralizada
-EXPORT_DIR = "./exports"
+EXPORT_DIR = CONFIG.get("exports_path", "./exports")
 
 # Conexión a la base de datos
 try:
@@ -72,6 +73,11 @@ def marc_fields(dataset) -> str:
 
 def ensure_export_directory():
     """Asegura que el directorio de exportación centralizado existe"""
+    global EXPORT_DIR  # Indicar que modificaremos la variable global
+    
+    # Obtener la ruta más actualizada de la configuración
+    EXPORT_DIR = CONFIG.get("exports_path", "./exports")
+    
     os.makedirs(EXPORT_DIR, exist_ok=True)
     logger.debug(f"Directorio de exportación {EXPORT_DIR} creado o verificado")
 
@@ -175,13 +181,40 @@ def export_json(dataset:str) -> None:
         else:
             print(f"Error: {str(e)}")
 
-def export_xml_2(dataset:str):
+def export_xml(dataset:str):
     """Exporta el dataset en formato XML optimizado"""
     try:
         ensure_export_directory()
         logger.info(f"Exportando {dataset} en XML")
         if ui_available:
             ui.show_info(f"Exportando {dataset} en XML")
+        
+        # Conexión a la base de datos
+        local_con = sqlite3.connect(db_path)
+        
+        # Verificar si la tabla existe
+        check_cur = local_con.cursor()
+        check_cur.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{dataset}'")
+        if not check_cur.fetchone():
+            logger.warning(f"La tabla {dataset} no existe en la base de datos")
+            if ui_available:
+                ui.show_warning(f"La tabla {dataset} no existe en la base de datos")
+            local_con.close()
+            return
+        
+        # Obtener conteo total para la barra de progreso
+        count_cur = local_con.cursor()
+        count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
+        result = count_cur.fetchone()
+        total_records = int(result[0]) if result else 0
+        
+        # Si no hay registros, mostrar mensaje y salir
+        if total_records == 0:
+            logger.warning(f"La tabla {dataset} no contiene registros")
+            if ui_available:
+                ui.show_warning(f"La tabla {dataset} no contiene registros")
+            local_con.close()
+            return
         
         def xml_factory(cursor, row):
             result = "<item>"
@@ -195,17 +228,15 @@ def export_xml_2(dataset:str):
             return result
         
         headers = human_fields(dataset)
-        con = sqlite3.connect(db_path)
-        con.row_factory = xml_factory
-        cur = con.cursor()
+        
+        # Configurar la conexión para utilizar la factory de XML
+        local_con.row_factory = xml_factory
+        cur = local_con.cursor()
         
         file_name = f"{EXPORT_DIR}/{dataset}_{file_names[dataset].lower()}-XML.xml"
-        query = f"SELECT {headers} FROM {dataset};"
         
-        # Obtener conteo total para la barra de progreso
-        count_cur = con.cursor()
-        count_cur.execute(f"SELECT COUNT(*) FROM {dataset}")
-        total_records = count_cur.fetchone()[0]
+        # CORRECCIÓN: No incluir punto y coma al final de la consulta base
+        query = f"SELECT {headers} FROM {dataset}"  # Sin punto y coma
         
         # Exportar en lotes para mejor rendimiento
         batch_size = 5000
@@ -231,6 +262,9 @@ def export_xml_2(dataset:str):
                         break
             
             file.write("</list>")
+        
+        # Cerrar la conexión cuando hayamos terminado
+        local_con.close()
         
         # Comprimir archivo
         with ZipFile(f"{EXPORT_DIR}/{dataset}_{file_names[dataset].lower()}-XML.zip", 'w', zipfile.ZIP_DEFLATED) as myzip:
@@ -275,7 +309,7 @@ def process_all_datasets():
             export_csv(dataset)
             export_txt(dataset)
             export_json(dataset)
-            export_xml_2(dataset)
+            export_xml(dataset)
             logger.info(f"Procesamiento completo de {dataset}")
             if ui_available:
                 ui.show_success(f"Procesamiento completo de {dataset}")
@@ -298,7 +332,7 @@ def process_single_dataset(dataset):
         export_csv(dataset)
         export_txt(dataset)
         export_json(dataset)
-        export_xml_2(dataset)
+        export_xml(dataset)
         
         # Limpieza selectiva
         cleanup_files()

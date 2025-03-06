@@ -150,7 +150,7 @@ class ConsoleUI:
     
     def show_info(self, message):
         """Muestra un mensaje informativo"""
-        print(f"\n{Fore.CYAN}ℹ {message}{Style.RESET_ALL}")
+        print(f"\n{Fore.CYAN}ℹ  {message}{Style.RESET_ALL}")
         self.logger.info(message)
     
     def wait_for_keypress(self, message="Presione ENTER para continuar..."):

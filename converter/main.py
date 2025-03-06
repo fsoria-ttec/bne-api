@@ -335,7 +335,6 @@ def main():
                     
                     # Conectar a la BD
                     con = sqlite3.connect(db_path)
-                    cur = con.cursor()
                     
                     # Descargar archivo específico
                     if get_files((urls[user],)):
@@ -374,7 +373,7 @@ def main():
             try:
                 import create_files
                 # Asegurarse de que el directorio de exportación exista
-                export_dir = "./exports"
+                export_dir = CONFIG.get("exports_path", "./exports")
                 os.makedirs(export_dir, exist_ok=True)
         
                 ui.show_info(f"Los archivos se exportarán a: {export_dir}")
