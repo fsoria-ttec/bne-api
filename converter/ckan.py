@@ -70,7 +70,7 @@ def cargar_configuracion():
 def actualizar_fecha_ckan(datasets):
     """
     Actualiza SOLO la fecha de última modificación de los datasets en CKAN
-    sin alterar ningún otro metadato.
+    usando package_update con todos los datos existentes.
     
     Args:
         datasets (dict): Diccionario con los nombres de los datasets a actualizar
@@ -107,18 +107,23 @@ def actualizar_fecha_ckan(datasets):
                 dataset_exists = response.status_code == 200
                 
                 if dataset_exists:
+                    # Obtener todos los datos existentes del dataset
                     existing_dataset = response.json().get('result', {})
                     
-                    # Si el dataset existe, solo actualizar la fecha de modificación
+                    # Si el dataset existe, hacer una actualización completa
                     if 'id' in existing_dataset:
+                        # Usar directamente los datos existentes para la actualización
+                        # Esto preservará todos los metadatos y solo actualizará la fecha
                         update_url = f"{ckan_url}/api/3/action/package_update"
-                        dataset_data = {'id': existing_dataset['id']}
                         
                         try:
                             with tqdm(total=1, desc=f"Actualizando fecha en CKAN", unit="dataset") as pbar:
-                                response = session.post(update_url, json=dataset_data, verify=False)
+                                # Usamos los datos existentes, no necesitamos modificar nada específicamente
+                                # CKAN actualizará automáticamente el campo metadata_modified
+                                response = session.post(update_url, json=existing_dataset, verify=False)
                                 if response.status_code != 200:
                                     logger.error(f"Error HTTP {response.status_code}: {response.text}")
+                                    logger.error(f"Contenido de la respuesta: {response.text}")
                                 response.raise_for_status()
                                 pbar.update(1)
                             
@@ -126,6 +131,7 @@ def actualizar_fecha_ckan(datasets):
                             
                         except Exception as e:
                             logger.error(f"Error actualizando fecha para dataset {dataset_id}: {e}")
+                            logger.error(f"Detalles del error: {str(e)}")
                             continue
                 else:
                     logger.warning(f"El dataset {dataset_id} no existe en CKAN, no se puede actualizar la fecha")
