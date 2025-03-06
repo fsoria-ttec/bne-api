@@ -101,7 +101,7 @@ def actualizar_fecha_ckan(datasets):
                     
                     # Si el dataset existe, solo actualizar la fecha de modificación
                     if 'id' in existing_dataset:
-                        update_url = f"{CKAN_URL}/api/3/action/package_patch"
+                        update_url = f"{CKAN_URL}/api/3/action/package_update"
                         dataset_data = {'id': existing_dataset['id']}
                         
                         try:
@@ -136,28 +136,32 @@ def actualizar_CKAN(datasets):
     """
     # Cargar configuración desde el archivo JSON
     config = cargar_configuracion()
+    logger = setup_logging()
     
     try:
-        session = req.Session()
-        session.headers.update({
-            'Authorization': API_KEY,
-            'Content-Type': 'application/json'
-        })
+        # Importar ckanapi
+        import ckanapi
+        
+        # Crear cliente CKAN
+        ckan = ckanapi.RemoteCKAN(
+            CKAN_URL,
+            apikey=API_KEY
+        )
         
         for dataset_name, mrc_file in datasets.items():
             dataset_id = dataset_name[:3]  
             
-            print(f"Procesando dataset: {dataset_id}")
+            logger.info(f"Procesando dataset: {dataset_id}")
             
             # Verificar si el dataset ya existe en CKAN
-            check_url = f"{CKAN_URL}/api/3/action/package_show"
             try:
-                response = session.get(f"{check_url}?id={dataset_id}", verify=False)
-                dataset_exists = response.status_code == 200
-                if dataset_exists:
-                    existing_dataset = response.json().get('result', {})
+                existing_dataset = ckan.action.package_show(id=dataset_id)
+                dataset_exists = True
+            except ckanapi.NotFound:
+                dataset_exists = False
+                existing_dataset = {}
             except Exception as e:
-                print(f"Error al verificar existencia del dataset {dataset_id}: {e}")
+                logger.error(f"Error al verificar existencia del dataset {dataset_id}: {str(e)}")
                 dataset_exists = False
                 existing_dataset = {}
             
@@ -223,12 +227,17 @@ def actualizar_CKAN(datasets):
             
             # Añadir descripción
             dataset_data['notes'] = f"Datos actualizados desde registros MARC21 ({mrc_file})"
-                
-            # Añadir campos de configuración
-            for key, value in config.items():
-                # Ignorar claves especiales que no son para CKAN directamente
-                if key not in ["formatos_exportacion", "traduccion_habilitada"]:
-                    dataset_data[key] = value
+            
+            # Lista de campos permitidos para CKAN
+            campos_permitidos = [
+                "owner_org", "author", "contact_email", "dcat_type",
+                "language", "maintainer", "hvd_category", "identifier"
+            ]
+            
+            # Solo añadir campos explícitamente permitidos
+            for key in campos_permitidos:
+                if key in config:
+                    dataset_data[key] = config[key]
                     
             # Identificador específico
             dataset_data["identifier"] = mrc_file
@@ -238,26 +247,22 @@ def actualizar_CKAN(datasets):
                 dataset_data['id'] = existing_dataset['id']
             
             # Crear o actualizar el dataset
-            if dataset_exists:
-                update_url = f"{CKAN_URL}/api/3/action/package_update"
-                action = "actualizando"
-            else:
-                update_url = f"{CKAN_URL}/api/3/action/package_create"
-                action = "creando"
-                
             try:
-                with tqdm(total=1, desc=f"{action.capitalize()} dataset en CKAN", unit="dataset") as pbar:
-                    response = session.post(update_url, json=dataset_data, verify=False)
-                    response.raise_for_status()
-                    resultado = response.json()
+                with tqdm(total=1, desc=f"Actualizando dataset en CKAN", unit="dataset") as pbar:
+                    if dataset_exists:
+                        result = ckan.action.package_update(**dataset_data)
+                        action = "actualizado"
+                    else:
+                        result = ckan.action.package_create(**dataset_data)
+                        action = "creado"
                     pbar.update(1)
                 
-                print(f"Dataset {dataset_id} {action} exitosamente en CKAN")
+                logger.info(f"Dataset {dataset_id} {action} exitosamente en CKAN")
             except Exception as e:
-                print(f"Error {action} dataset {dataset_id} en CKAN: {e}")
+                logger.error(f"Error al procesar dataset {dataset_id} en CKAN: {str(e)}")
                 continue
                 
     except Exception as e:
-        print(f"Error general al actualizar CKAN: {e}")
+        logger.error(f"Error general al actualizar CKAN: {str(e)}")
         
     return
