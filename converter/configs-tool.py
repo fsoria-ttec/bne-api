@@ -6,8 +6,6 @@ Herramienta para configurar BNE Converter
 """
 
 import os
-import json
-import pathlib
 from configs import CONFIG, EXPORT_FORMATS, BATCH_SIZE, CONCURRENT_DOWNLOADS, save_config
 
 try:
@@ -77,10 +75,16 @@ def print_current_config():
     print()
     
     # CKAN
+    default_api_url = "http://svjc-des-bne.ttec.es:3000/api"
+    current_api_url = CONFIG.get("api_base_url", default_api_url)
+    default_ckan_url = "http://svjc-des-bne.ttec.es:3000/api"
+    current_ckan_url = CONFIG.get("api_base_url", default_ckan_url)
     print(color_text("4. CKAN:", Fore.GREEN + Style.BRIGHT))
     api_key = "Configurada" if CONFIG.get("api_key", "").strip() else "No configurada"
     api_key_color = Fore.GREEN if api_key == "Configurada" else Fore.YELLOW
     print(f"   • API Key: {color_text(api_key, api_key_color)}")
+    print(f"   • API URL: {color_text(current_api_url, api_key_color)}")
+    print(f"   • CKAN URL: {color_text(current_ckan_url, api_key_color)}")
     print()
     
     print(color_text("0. Salir", Fore.YELLOW))
@@ -282,11 +286,11 @@ def configure_ckan():
         print("API Key: No configurada")
     
     print(f"CKAN URL: {ckan_url if ckan_url else 'Valor predeterminado'}")
-    print(f"API Base URL: {api_base_url if api_base_url else 'Valor predeterminado'}")
+    print(f"API URL: {api_base_url if api_base_url else 'Valor predeterminado'}")
     
     print("\n1. Configurar API Key")
-    print("2. Configurar CKAN URL")
-    print("3. Configurar API URL")
+    print("2. Configurar API URL")
+    print("3. Configurar CKAN URL")
     print()
     print("0. Volver")
     print()
@@ -302,20 +306,8 @@ def configure_ckan():
             print(color_text("\n✓ API Key configurada correctamente", Fore.GREEN))
         else:
             print(color_text("\nSe mantuvo la API Key actual", Fore.YELLOW))
-    
+
     elif option == "2":
-        default_url = "http://svjc-des-ckan.ttec.es:84/catalogo"
-        current_url = CONFIG.get("ckan_url", default_url)
-        new_url = input(color_text(f"CKAN URL ({current_url}): ", Fore.GREEN))
-        
-        if new_url.strip():
-            CONFIG["ckan_url"] = new_url
-            save_config(CONFIG)
-            print(color_text("\n✓ CKAN URL configurada correctamente", Fore.GREEN))
-        else:
-            print(color_text("\nSe mantuvo la CKAN URL actual", Fore.YELLOW))
-    
-    elif option == "3":
         default_url = "http://svjc-des-bne.ttec.es:3000/api"
         current_url = CONFIG.get("api_base_url", default_url)
         new_url = input(color_text(f"API Base URL ({current_url}): ", Fore.GREEN))
@@ -326,7 +318,19 @@ def configure_ckan():
             print(color_text("\n✓ API Base URL configurada correctamente", Fore.GREEN))
         else:
             print(color_text("\nSe mantuvo la API Base URL actual", Fore.YELLOW))
-    
+
+    elif option == "3":
+        default_url = "http://svjc-des-ckan.ttec.es:84/catalogo"
+        current_url = CONFIG.get("ckan_url", default_url)
+        new_url = input(color_text(f"CKAN URL ({current_url}): ", Fore.GREEN))
+        
+        if new_url.strip():
+            CONFIG["ckan_url"] = new_url
+            save_config(CONFIG)
+            print(color_text("\n✓ CKAN URL configurada correctamente", Fore.GREEN))
+        else:
+            print(color_text("\nSe mantuvo la CKAN URL actual", Fore.YELLOW))
+        
     input("\nPresione ENTER para continuar...")
 
 def main_menu():

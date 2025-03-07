@@ -287,6 +287,7 @@ def main():
         
         if choice == 1:  # Procesar todos los datasets
             if ui.show_confirmation("Se generarán todos los conjuntos de datos.\n¿Está seguro de que quiere continuar?"):
+
                 # Borrar DB existente si es necesario
                 try:
                     ejecutar_comando("borrar_arc", db_path)    
