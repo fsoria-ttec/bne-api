@@ -1,6 +1,7 @@
 from flask import Blueprint,  request, render_template, Response, g, send_file
 from db import QMO
 import time
+import os
 import datetime as dt
 import cProfile
 import pstats
@@ -38,13 +39,13 @@ def r_query(model):
     El resto del código es un conjunto de pasos secuenciales lógicos:
     1. Recibir los argumentos del cliente
     2. Consultar la db con esos argumentos
-    3. Entrejar un fichero csv o json si el cliente lo ha solicitado o sino
+    3. Entrejar un fichero csv, json, txt, xml o ods si el cliente lo ha solicitado o sino
     4. Entregar un JSON limitado siempre a 1000 resultados
     '''
-    model = sub("\.csv|\.json", "", model)
+    model = sub("\.csv|\.json|\.txt|\.xml|\.ods", "", model)
     args = {}
     for k,arg in request.args.items():
-        args[k] = sub("\.csv|\.json", "", arg)
+        args[k] = sub("\.csv|\.json|\.txt|\.xml|\.ods", "", arg)
     file_extension = request.url.rsplit(".", 1)[-1]
     # with cProfile.Profile() as pr: # http://localhost:3000/api/per?t_375=masculino&limit=1000000 # código comentado  que sirve para evaluar el rendimiento de la respuesta
     qmo_1 = QMO(model, args)
@@ -52,25 +53,55 @@ def r_query(model):
         return render_template("errors/404.html", message=f"{model} no es un conjunto de datos existente")
     
     data = qmo_1.json() # Éste método está explicado en db.py
-    if file_extension in ("csv", "json"):
+   # Modificar solo la parte de manejo de archivos en r_query
+    if file_extension in ("csv", "json", "txt", "xml", "ods"):
         if not data["success"]:
             return {"success": False, "message": f"No se ha podido generar el {file_extension}", "error": data["message"]}
-        if file_extension == "csv":
-            try:
-                file_name = qmo_1.export_csv()
-                return send_file(f"{file_name}.zip", mimetype="text/csv")
-            except Exception as e:
-                write_error(40, f"{e}", "Couldn't export csv")
-                return {"success":False, "message": "No se ha podido generar el csv"}
-        elif file_extension == "json":
-            try:
-                file_name = qmo_1.export_json()
-                return send_file(f"{file_name}.zip", mimetype="text/csv")
-            except Exception as e:
-                write_error(41, f"{e}", "Couldn't export json")
-                return {"success":False, "message": "No se ha podido generar el json"}
-
+        
+        export_functions = {
+            "csv": qmo_1.export_csv,
+            "json": qmo_1.export_json,
+            "txt": qmo_1.export_txt,
+            "xml": qmo_1.export_xml,
+            "ods": qmo_1.export_ods
+        }
+        
+        mime_types = {
+            "csv": "application/zip",
+            "json": "application/zip",
+            "txt": "application/zip",
+            "xml": "application/zip",
+            "ods": "application/zip"
+        }
+        
+        try:
+            file_name = export_functions[file_extension]()
+            zip_path = f"{file_name}.zip"
+            
+            # Verificar que el archivo existe y tiene contenido
+            if not os.path.exists(zip_path) or os.path.getsize(zip_path) == 0:
+                write_error(450, f"Archivo zip vacío o inexistente: {zip_path}", f"Empty zip for {file_extension}")
+                return {"success": False, "message": f"Error al generar el archivo {file_extension}"}
+            
+            # Entregar el archivo
+            response = send_file(
+                zip_path, 
+                mimetype=mime_types[file_extension],
+                as_attachment=True,
+                download_name=f"{model}_{dt.datetime.now().strftime('%Y%m%d%H%M%S')}.zip"
+            )
+            
+            # Establecer cabeceras para evitar almacenamiento en caché
+            response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+            
+            return response
+        except Exception as e:
+            write_error(460, f"{e}", f"Couldn't deliver {file_extension}")
+            return {"success": False, "message": f"No se ha podido generar el {file_extension}: {str(e)}"}
     # data = qmo_1.json()
+
     print(f"{request.url}".center(100,"-"))
     if data["success"]:
         data["time"] = time.perf_counter()
