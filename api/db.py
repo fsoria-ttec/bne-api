@@ -13,6 +13,8 @@ import shutil
 import subprocess
 import zipfile
 from secrets import token_hex
+from views.api.utils import write_error
+import os  
 
 structs = {}
 
@@ -316,7 +318,7 @@ class QMO:
         else:
             # Cuando no si define ROWID la query es limitada a 1000 registros
             if limit:
-                return query + " LIMIT 1000;"
+                return query + ";"
         
         return query
     
@@ -397,7 +399,7 @@ class QMO:
         query = query.replace('"', "")
         
         # Usar sqlite3 de manera multiplataforma
-        db_path = os.path.join("instance", "bne.db")
+        db_path = os.path.join(current_app.config.get("DB_FILE"))
         
         # Ejecutar sqlite3 como proceso independiente
         if platform.system() == "Windows":
@@ -426,7 +428,7 @@ class QMO:
         '''Método alternativo para exportar a CSV usando Python si sqlite3 CLI falla'''
         import csv
         
-        connection = sqlite3.connect(os.path.join("instance", "bne.db"))
+        connection = sqlite3.connect(current_app.config.get("DB_FILE"))
         cursor = connection.cursor()
         
         with open(csv_file, 'w', newline='') as f:
@@ -464,7 +466,7 @@ class QMO:
         query = self.query(count=False, limit=False)
         
         # Usar sqlite3 de manera multiplataforma
-        db_path = os.path.join("instance", "bne.db")
+        db_path = os.path.join(current_app.config.get("DB_FILE"))
         
         # Ejecutar sqlite3 como proceso independiente
         if platform.system() == "Windows":
@@ -493,7 +495,7 @@ class QMO:
         '''Método alternativo para exportar a JSON usando Python si sqlite3 CLI falla'''
         import json
         
-        connection = sqlite3.connect(os.path.join("instance", "bne.db"))
+        connection = sqlite3.connect(current_app.config.get("DB_FILE"))
         connection.row_factory = sqlite3.Row  # Para obtener resultados como diccionarios
         cursor = connection.cursor()
         
@@ -513,6 +515,237 @@ class QMO:
                     os.remove(file)
                 except (PermissionError, OSError):
                     pass  # Ignorar errores si el archivo está en uso o no se puede eliminar    
+
+    def export_txt(self) -> str:
+        '''Exporta los resultados a un archivo TXT de manera compatible con Windows y Linux'''
+        file_name = self.dataset + "_" + token_hex(2)
+        txt_file = f"{file_name}.txt"
+        zip_file = f"{file_name}.zip"
+        
+        # Eliminar archivos anteriores si existen
+        self._remove_previous_files(self.dataset)
+        
+        # Generar la consulta SQL sin comillas
+        query = self.query(limit=False)
+        query = query.replace('"', "")
+        
+        # Usar sqlite3 de manera multiplataforma
+        db_path = current_app.config.get("DB_FILE", "instance/bne.db")
+        
+        try:
+            # Abrir la conexión a la base de datos
+            connection = sqlite3.connect(db_path)
+            cursor = connection.cursor()
+            
+            # Ejecutar la consulta
+            cursor.execute(query)
+            
+            # Obtener los nombres de las columnas
+            column_names = [description[0] for description in cursor.description]
+            
+            # Escribir los resultados en un archivo TXT
+            with open(txt_file, 'w', encoding='utf-8') as f:
+                # Escribir encabezados
+                f.write('\t'.join(column_names) + '\n')
+                f.write('-' * 80 + '\n')  # Línea separadora
+                
+                # Escribir datos
+                for row in cursor.fetchall():
+                    formatted_row = [str(item) if item is not None else '' for item in row]
+                    f.write('\t'.join(formatted_row) + '\n')
+            
+            connection.close()
+            
+            # Comprimir usando zipfile
+            with zipfile.ZipFile(zip_file, 'w') as zipf:
+                zipf.write(txt_file, arcname=os.path.basename(txt_file))
+            
+            # Eliminar el archivo TXT original
+            if os.path.exists(txt_file):
+                os.remove(txt_file)
+            
+            return file_name
+        except Exception as e:
+            write_error(42, f"{e}", "Couldn't export txt")
+            raise e
+
+    def export_xml(self) -> str:
+        '''Exporta los resultados a un archivo XML de manera compatible con Windows y Linux'''
+        import os
+        import logging
+        from datetime import datetime
+        
+        # Configurar logging para depuración
+        logging.basicConfig(filename='xml_export_debug.log', level=logging.DEBUG)
+        log = logging.getLogger('xml_export')
+        log.debug(f"Iniciando exportación XML: {datetime.now()}")
+        
+        file_name = self.dataset + "_" + token_hex(2)
+        xml_file = f"{file_name}.xml"
+        zip_file = f"{file_name}.zip"
+        
+        # Eliminar archivos anteriores si existen
+        self._remove_previous_files(self.dataset)
+        log.debug(f"Archivos anteriores eliminados")
+        
+        # Generar la consulta SQL sin comillas
+        query = self.query(limit=False)
+        query = query.replace('"', "")
+        log.debug(f"Consulta SQL: {query}")
+        
+        # Usar sqlite3 de manera multiplataforma
+        db_path = current_app.config.get("DB_FILE", "instance/bne.db")
+        log.debug(f"Ruta a la base de datos: {db_path}")
+        
+        try:
+            # Crear un XML mínimo garantizado para verificar
+            minimal_xml = '<?xml version="1.0" encoding="UTF-8"?>\n<dataset name="test"><record><field>test</field></record></dataset>'
+            with open(xml_file, 'w', encoding='utf-8') as f:
+                f.write(minimal_xml)
+            log.debug(f"XML mínimo creado: {os.path.getsize(xml_file)} bytes")
+            
+            # Abrir la conexión a la base de datos
+            connection = sqlite3.connect(db_path)
+            cursor = connection.cursor()
+            
+            # Ejecutar la consulta
+            cursor.execute(query)
+            
+            # Obtener los nombres de las columnas
+            column_names = [description[0] for description in cursor.description]
+            log.debug(f"Columnas recuperadas: {column_names}")
+            
+            # Iniciar la construcción del XML
+            xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
+            xml_content += f'<dataset name="{self.dataset}">\n'
+            
+            # Procesar cada fila y construir el XML
+            row_count = 0
+            for row in cursor.fetchall():
+                row_count += 1
+                xml_content += '  <record>\n'
+                for i, column in enumerate(column_names):
+                    value = row[i]
+                    if value is not None:
+                        # Escapar caracteres especiales XML (usando CDATA para texto largo)
+                        if isinstance(value, str):
+                            if len(value) > 100 or any(c in value for c in '<>&"\''):
+                                xml_content += f'    <{column}><![CDATA[{value}]]></{column}>\n'
+                            else:
+                                xml_content += f'    <{column}>{value}</{column}>\n'
+                        else:
+                            xml_content += f'    <{column}>{value}</{column}>\n'
+                xml_content += '  </record>\n'
+            
+            xml_content += '</dataset>'
+            log.debug(f"XML generado: {row_count} registros")
+            
+            connection.close()
+            
+            # Escribir el XML completo al archivo
+            with open(xml_file, 'w', encoding='utf-8') as f:
+                f.write(xml_content)
+            log.debug(f"XML escrito a disco: {os.path.getsize(xml_file)} bytes")
+            
+            # Verificar que el archivo existe y tiene contenido
+            if not os.path.exists(xml_file) or os.path.getsize(xml_file) == 0:
+                raise Exception(f"El archivo XML está vacío o no existe: {xml_file}")
+            
+            # Comprimir usando zipfile
+            with zipfile.ZipFile(zip_file, 'w') as zipf:
+                zipf.write(xml_file, arcname=os.path.basename(xml_file))
+            log.debug(f"Archivo ZIP creado: {os.path.getsize(zip_file)} bytes")
+            
+            # Verificar que el ZIP existe y tiene contenido
+            if not os.path.exists(zip_file) or os.path.getsize(zip_file) == 0:
+                raise Exception(f"El archivo ZIP está vacío o no existe: {zip_file}")
+            
+            # Eliminar el archivo XML original
+            if os.path.exists(xml_file):
+                os.remove(xml_file)
+            
+            log.debug(f"Exportación XML completada con éxito")
+            return file_name
+        except Exception as e:
+            log.exception(f"Error en exportación XML: {str(e)}")
+            write_error(43, f"{e}", "Couldn't export xml")
+            
+            # Crear un XML de error para propósitos de diagnóstico
+            error_xml = f'<?xml version="1.0" encoding="UTF-8"?>\n<error><message>{str(e)}</message></error>'
+            with open(xml_file, 'w', encoding='utf-8') as f:
+                f.write(error_xml)
+                
+            # Comprimir el XML de error
+            with zipfile.ZipFile(zip_file, 'w') as zipf:
+                zipf.write(xml_file, arcname=os.path.basename(xml_file))
+                
+            # Limpiar
+            if os.path.exists(xml_file):
+                os.remove(xml_file)
+                
+            return file_name
+
+    def export_ods(self) -> str:
+        '''Exporta los resultados a un archivo ODS (OpenDocument Spreadsheet) de manera compatible con Windows y Linux'''
+        file_name = self.dataset + "_" + token_hex(2)
+        ods_file = f"{file_name}.ods"
+        
+        # Eliminar archivos anteriores si existen
+        self._remove_previous_files(self.dataset)
+        
+        # Generar la consulta SQL sin comillas
+        query = self.query(limit=False)
+        query = query.replace('"', "")
+        
+        # Usar sqlite3 de manera multiplataforma
+        db_path = current_app.config.get("DB_FILE", "instance/bne.db")
+        
+        try:
+            # Importar pyexcel para crear archivos ODS
+            import pyexcel
+            
+            # Abrir la conexión a la base de datos
+            connection = sqlite3.connect(db_path)
+            cursor = connection.cursor()
+            
+            # Ejecutar la consulta
+            cursor.execute(query)
+            
+            # Obtener los nombres de las columnas
+            column_names = [description[0] for description in cursor.description]
+            
+            # Preparar los datos para pyexcel
+            data = [column_names]  # Primera fila: encabezados
+            
+            # Agregar filas de datos
+            for row in cursor.fetchall():
+                formatted_row = [str(item) if item is not None else '' for item in row]
+                data.append(formatted_row)
+            
+            connection.close()
+            
+            # Guardar como ODS
+            pyexcel.save_as(array=data, dest_file_name=ods_file)
+            
+            # Crear archivo zip (ODS ya es un archivo comprimido, pero lo hacemos por consistencia)
+            zip_file = f"{file_name}.zip"
+            with zipfile.ZipFile(zip_file, 'w') as zipf:
+                zipf.write(ods_file, arcname=os.path.basename(ods_file))
+            
+            # Eliminar el archivo ODS original
+            if os.path.exists(ods_file):
+                os.remove(ods_file)
+            
+            return file_name
+        except ImportError:
+            # Si pyexcel no está instalado, crear un mensaje de error
+            write_error(44, "Pyexcel not installed", "Couldn't export ods - dependency missing")
+            raise ImportError("La biblioteca pyexcel es necesaria para exportar a formato ODS. " + 
+                             "Instale con 'pip install pyexcel pyexcel-ods3'")
+        except Exception as e:
+            write_error(45, f"{e}", "Couldn't export ods")
+            raise e
+
     def enter(self, query:str, length:int=None, date:str=None, dataset:str=None, time:float=None,is_from_web:bool=False ,error:bool=None, update:bool=False):
         # g._database = None
         # con = self.get_db("instance/users.db")
