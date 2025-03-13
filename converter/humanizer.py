@@ -702,9 +702,9 @@ def extract_values(dataset:str ,record:dict) -> tuple:
         # tipo de soporte
         humans.append(get_single_dollar(record.get("338"), "a"))
         #sonido
-        humans.append(get_multi_dollar(record.get("344"), ("a", "b", "c"), ""))
+        humans.append(get_multi_dollar(record.get("344"), ("a", "b", "c", "g"), ", "))
         #imagen_video
-        humans.append(get_multi_dollar(record.get("344"), ("a", "c", "d"), "") + "/**/" + get_multi_dollar(record.get("346"), ("a", "b"), "") if get_multi_dollar(record.get("346"), ("a", "b"), "") and  get_multi_dollar(record.get("343"), ("a", "c", "d"), "") else get_multi_dollar(record.get("343"), ("a", "c", "d"), ""))
+        humans.append(get_multi_dollar(record.get("345"), ("a", "c", "d"), "") + "/**/" + get_multi_dollar(record.get("346"), ("a", "b"), "") if get_multi_dollar(record.get("346"), ("a", "b"), "") and get_multi_dollar(record.get("345"), ("a", "c", "d"), "") else get_multi_dollar(record.get("345"), ("a", "c", "d"), ""))
         humans.append(mon_serie(record.get("440"), record.get("490")))
         # equipo
         humans.append(get_single_dollar(record.get("508"), "a"))
