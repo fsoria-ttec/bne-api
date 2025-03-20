@@ -3,6 +3,50 @@
 <!-- <script src="/static/js/config.js" defer></script> -->
 <script src="/static/js/filter.js" defer></script>
 <script src="/static/js/index.js" defer></script>
+
+<style>
+/* Estilos de paginación con color #003164 */
+.pagination .page-item.active .page-link {
+    background-color: #003164;
+    border-color: #003164;
+    color: white;
+}
+
+.pagination .page-link {
+    color: #003164;
+}
+
+.pagination .page-link:hover {
+    color: #003164;
+    background-color: rgba(0, 49, 100, 0.1);
+    border-color: rgba(0, 49, 100, 0.25);
+}
+
+.pagination .page-link:focus {
+    box-shadow: 0 0 0 0.25rem rgba(0, 49, 100, 0.25);
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    cursor: default;
+}
+
+/* Estilo para el botón de salto de página */
+#jump-btn {
+    background-color: #003164;
+    border-color: #003164;
+}
+
+#jump-btn:hover {
+    background-color: #002040;
+    border-color: #002040;
+}
+
+#jump-btn:focus {
+    box-shadow: 0 0 0 0.25rem rgba(0, 49, 100, 0.25);
+}
+</style>
 <!-- <script src="/static/js/query_builder.js" defer></script> -->
 {%endblock%}
 {%block main%}
@@ -95,8 +139,43 @@
                 </tbody>
             </table>
         </div>
-        </div>
-    
+    </div>
+    <div class="d-flex justify-content-between align-items-center mt-3" id="pagination-container">
+    <div class="pagination-info">
+        Mostrando <span id="page-start">0</span> - <span id="page-end">0</span> de <span id="total-records">0</span> registros
+    </div>
+    <nav aria-label="Navegación de resultados">
+        <ul class="pagination">
+            <!-- Botón Primera página -->
+            <li class="page-item" id="first-page">
+                <a class="page-link" href="#" aria-label="Primera">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                </a>
+            </li>
+            <!-- Botón Anterior -->
+            <li class="page-item" id="prev-page">
+                <a class="page-link" href="#" aria-label="Anterior">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item d-none" id="page-template">
+                <a class="page-link" href="#"></a>
+            </li>
+            <!-- Botón Siguiente -->
+            <li class="page-item" id="next-page">
+                <a class="page-link" href="#" aria-label="Siguiente">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            <!-- Botón Última página -->
+            <li class="page-item" id="last-page">
+                <a class="page-link" href="#" aria-label="Última">
+                    <span aria-hidden="true">&raquo;&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    </div>    
         <style>
             #results_thead th {position:sticky; top:0; z-index:1; font-weight:normal}
             .bg_primary {background-color: #39adcc;}

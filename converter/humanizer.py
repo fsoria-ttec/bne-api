@@ -701,7 +701,7 @@ def extract_values(dataset:str ,record:dict) -> tuple:
         humans.append(get_single_dollar(record.get("337"), "a"))
         # tipo de soporte
         humans.append(get_single_dollar(record.get("338"), "a"))
-        #sonido
+        #sonido_vid
         humans.append(get_multi_dollar(record.get("344"), ("a", "b", "c", "g"), ", "))
         #imagen_video
         humans.append(get_multi_dollar(record.get("345"), ("a", "c", "d"), "") + "/**/" + get_multi_dollar(record.get("346"), ("a", "b"), "") if get_multi_dollar(record.get("346"), ("a", "b"), "") and get_multi_dollar(record.get("345"), ("a", "c", "d"), "") else get_multi_dollar(record.get("345"), ("a", "c", "d"), ""))

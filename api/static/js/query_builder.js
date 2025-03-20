@@ -141,39 +141,59 @@ const populate_filters = () => {
         };
     });
 };
-// populate_filters();
+
 const show_filters = () => {
     let result = "";
     const kvs = {};
-    keys_or = [];
     const keys = Array(...document.getElementsByClassName("k"));
     const values = Array(...document.getElementsByClassName("v"));
     
-
+    // Recopilar filtros actuales de la UI
     for (let i = 0; i < keys.length; i++) {
         let key = keys.at(i);
         let value = values.at(i).value;
-        // let and_or_switch = key.parentElement.parentElement.parentElement.getElementsByClassName("bne_and_or")[0].getElementsByTagName("input")[0];
         key = key.value;
         
-
-        if (kvs[key]) {
-            kvs[key] += `||${value}`;
-        } else {
-            kvs[key] = value;
-        };
-    };
-    for ([k,v] of Object.entries(kvs)) {
-        if (v) {
+        if (key !== 'page') {  // Ignorar el parámetro page
+            if (kvs[key]) {
+                kvs[key] += `||${value}`;
+            } else {
+                kvs[key] = value;
+            }
+        }
+    }
+    
+    // Construir la cadena de consulta
+    for (const [k, v] of Object.entries(kvs)) {
+        if (v && k !== 'page') {  // Verificar nuevamente que no se incluya page
             result += `${k}=${v}&`;
-        };
-    };
-    return result.substring(0,result.length -1);
+        }
+    }
+    
+    // Preservar el parámetro page actual
+    const currentUrl = new URL(window.location.href);
+    if (currentUrl.searchParams.has('page')) {
+        const currentPage = currentUrl.searchParams.get('page');
+        result += `page=${currentPage}&`;
+    }
+    
+    return result.substring(0, result.length - 1);
+
 };
+
 const trash_filter = (button) => {
     const div_filter = button.parentElement.parentElement.parentElement.parentElement;
     div_filter.remove();
 };
+
+// Cuando el usuario envía el formulario de búsqueda, iniciar desde la página 1
+document.getElementById('results').addEventListener('click', function() {
+    // Obtener la URL actual
+    const formUrl = new URL(window.location.href);
+    
+    // Reiniciar a la página 1 al cambiar los filtros
+    formUrl.searchParams.set('page', '1');
+});
 
 let query;
 let headers;

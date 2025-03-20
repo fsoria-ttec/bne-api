@@ -66,30 +66,48 @@ const populate_filters = () => {
             {}
         );
     let args = get_args();
+    
+    // Ignorar parámetros de paginación
+    if ('page' in args) {
+        delete args.page;
+    }
+    
     const view_i = Object.keys(args).indexOf("view");
-    document.querySelector("#view").value =  ["marc", "human"].indexOf(Object.values(args).at(view_i))  >= 0? Object.values(args).at(view_i): "";
+    document.querySelector("#view").value = ["marc", "human"].indexOf(Object.values(args).at(view_i)) >= 0 ? Object.values(args).at(view_i) : "";
     delete args.view;
+    
     if (Object.keys(args).length == 0) {
-        document.querySelector("#view").value =  "human";
+        document.querySelector("#view").value = "human";
         return;
     };
+    
     if (!args) {
         return;
     };
+    
+    // Crear filtros UI para cada parámetro (excepto page y view)
+    let filterIndex = 0;
     Object.entries(args).forEach((arg, i) => {
-        [k,v] = arg;
-        if (i > 1 && k != "is_from_web") add_filter();
+        const [k, v] = arg;
+        if (k !== "dataset" && k !== "is_from_web") {
+            if (filterIndex > 0) add_filter();
+            filterIndex++;
+        }
     });
-    Object.entries(args).forEach((arg, i) => {
-        [k,v] = arg;
+    
+    // Rellenar los valores de filtro
+    filterIndex = 0;
+    Object.entries(args).forEach((arg) => {
+        const [k, v] = arg;
         if (k === "dataset") {
             document.querySelector("#dataset").value = v;
-        } else {
-            const filter = [...document.querySelectorAll(".filter_div")].at(i-1);
+        } else if (k !== "is_from_web") {
+            const filter = [...document.querySelectorAll(".filter_div")].at(filterIndex);
             const inputs = Array(...filter.getElementsByTagName("input"));
             inputs[1].value = k;
-            inputs[2].value = v;    
-        };
+            inputs[2].value = v;
+            filterIndex++;
+        }
     });
 };
 
@@ -165,13 +183,16 @@ const show_data = () => {
         spinner.className = "visually-hidden";
         return;
     };
+
     spinner.className = "visually-hidden";
     // title.innerHTML = `Tiempo de respuesta: ${parseFloat(data.time).toFixed(2)}s`
-    title.innerHTML = "Resultados"
+    if (data.total_records !== undefined) 
+        title.innerHTML = `${data.total_records} registros encontrados`
     download_button.className = "btn btn-dark dropdown-toggle";
     const records = data.data;
     const tr_k = document.createElement("tr");
     const new_fields = get_headers();
+
     for  (let k of new_fields) {
         const th = document.createElement("th");
         const btn_close = document.createElement("button");
@@ -195,6 +216,7 @@ const show_data = () => {
         };
     };
     results_thead.appendChild(tr_k);
+
     records.forEach((record) => {
         const tr_v = document.createElement("tr");
         for (let k of new_fields) {
@@ -206,12 +228,141 @@ const show_data = () => {
         };
         results_tbody.appendChild(tr_v);
     })
+
+    updatePagination(data);
 };
 
 if (document.querySelector("#data")) {
     show_data();
 };
 
+function updatePagination(data) {
+    // Si no hay paginación, ocultar el contenedor
+    const paginationContainer = document.getElementById('pagination-container');
+    if (!data.total_records || !data.current_page || !data.total_pages) {
+        if (paginationContainer) paginationContainer.classList.add('d-none');
+        return;
+    }
+    
+    // Mostrar el contenedor de paginación
+    paginationContainer.classList.remove('d-none');
+    
+    // Actualizar información de registros mostrados
+    const totalRecords = data.total_records;
+    const currentPage = data.current_page;
+    const pageSize = data.page_size || 10;
+    const totalPages = data.total_pages;
+    
+    const startRecord = (currentPage - 1) * pageSize + 1;
+    const endRecord = Math.min(currentPage * pageSize, totalRecords);
+    
+    document.getElementById('page-start').textContent = startRecord;
+    document.getElementById('page-end').textContent = endRecord;
+    document.getElementById('total-records').textContent = totalRecords;
+    
+    // Actualizar botones de paginación
+    const pagination = document.querySelector('.pagination');
+    const firstPageItem = document.getElementById('first-page');
+    const prevPageItem = document.getElementById('prev-page');
+    const nextPageItem = document.getElementById('next-page');
+    const lastPageItem = document.getElementById('last-page');
+    const pageTemplate = document.getElementById('page-template');
+    
+    // Habilitar/deshabilitar botones de navegación
+    firstPageItem.classList.toggle('disabled', currentPage === 1);
+    prevPageItem.classList.toggle('disabled', currentPage === 1);
+    nextPageItem.classList.toggle('disabled', currentPage === totalPages);
+    lastPageItem.classList.toggle('disabled', currentPage === totalPages);
+    
+    // Configurar eventos para los botones de navegación
+    firstPageItem.querySelector('a').onclick = function(e) {
+        e.preventDefault();
+        if (currentPage > 1) goToPage(1);
+    };
+    
+    prevPageItem.querySelector('a').onclick = function(e) {
+        e.preventDefault();
+        if (currentPage > 1) goToPage(currentPage - 1);
+    };
+    
+    nextPageItem.querySelector('a').onclick = function(e) {
+        e.preventDefault();
+        if (currentPage < totalPages) goToPage(currentPage + 1);
+    };
+    
+    lastPageItem.querySelector('a').onclick = function(e) {
+        e.preventDefault();
+        if (currentPage < totalPages) goToPage(totalPages);
+    };
+    
+    // Eliminar botones de páginas existentes
+    Array.from(pagination.querySelectorAll('.page-item:not(#first-page):not(#prev-page):not(#next-page):not(#last-page):not(#page-template)')).forEach(item => {
+        pagination.removeChild(item);
+    });
+    
+    // Determinar qué páginas mostrar
+    let pagesToShow = 5; // Ajustar según necesidades
+    
+    // Reducir pagesToShow si hay muchas páginas y ajustar según espacio disponible
+    if (totalPages > 100) pagesToShow = 3;
+    
+    let startPage = Math.max(1, currentPage - Math.floor(pagesToShow / 2));
+    let endPage = Math.min(totalPages, startPage + pagesToShow - 1);
+    
+    if (endPage - startPage + 1 < pagesToShow && startPage > 1) {
+        startPage = Math.max(1, endPage - pagesToShow + 1);
+    }
+    
+    // Crear botones de páginas
+    for (let i = startPage; i <= endPage; i++) {
+        const pageItem = pageTemplate.cloneNode(true);
+        pageItem.id = `page-${i}`;
+        pageItem.classList.remove('d-none');
+        pageItem.classList.toggle('active', i === currentPage);
+        
+        const pageLink = pageItem.querySelector('a');
+        pageLink.textContent = i;
+        pageLink.onclick = function(e) {
+            e.preventDefault();
+            goToPage(i);
+        };
+        
+        // Insertar antes del botón Siguiente
+        pagination.insertBefore(pageItem, nextPageItem);
+    }
+    
+    // Añadir indicadores de más páginas si es necesario
+    if (startPage > 1) {
+        const ellipsisBefore = pageTemplate.cloneNode(true);
+        ellipsisBefore.classList.remove('d-none');
+        ellipsisBefore.querySelector('a').textContent = '...';
+        ellipsisBefore.querySelector('a').onclick = function(e) {
+            e.preventDefault();
+        };
+        ellipsisBefore.classList.add('disabled');
+        pagination.insertBefore(ellipsisBefore, document.getElementById(`page-${startPage}`));
+    }
+    
+    if (endPage < totalPages) {
+        const ellipsisAfter = pageTemplate.cloneNode(true);
+        ellipsisAfter.classList.remove('d-none');
+        ellipsisAfter.querySelector('a').textContent = '...';
+        ellipsisAfter.querySelector('a').onclick = function(e) {
+            e.preventDefault();
+        };
+        ellipsisAfter.classList.add('disabled');
+        pagination.insertBefore(ellipsisAfter, nextPageItem);
+    }
+}
+// Función para navegar a una página específica
+function goToPage(page) {
+    // Obtener la URL actual
+    const url = new URL(window.location.href);
+    // Actualizar el parámetro de página
+    url.searchParams.set('page', page);
+    // Navegar a la nueva URL
+    window.location.href = url.toString();
+}
 
 const remove_col = (button) => {
     cls_name = button.className.split(" ").at(-1);

@@ -100,12 +100,13 @@ def r_query(model):
         except Exception as e:
             write_error(460, f"{e}", f"Couldn't deliver {file_extension}")
             return {"success": False, "message": f"No se ha podido generar el {file_extension}: {str(e)}"}
-    # data = qmo_1.json()
-
+    
+    # Para respuestas JSON normales
     print(f"{request.url}".center(100,"-"))
     if data["success"]:
         data["time"] = time.perf_counter()
-        data["data"] = tuple(data["data"])
+        # Convertir el iterable map a lista para que sea serializable
+        data["data"] = list(data["data"])
         data["time"] = time.perf_counter() - data["time"]
         if model == "queries":
             data["length"] = len(data["data"]) 
@@ -117,10 +118,15 @@ def r_query(model):
         except Exception as e:
             write_error(2,f"{e}", "Couldn't save query")
         data.pop("query")
+    
     try:    
         data = msgspec.json.encode(data) # convertir cada diccionario en el iterable a un struct para luego generar el JSON
     except Exception as e:
         write_error(3, f"{e}", "Error ocurred while encoding data using msgspec")
+        # Fallback a JSON estándar en caso de error
+        import json
+        data = json.dumps({"success": False, "message": "Error interno al procesar la respuesta"})
+    
     res = Response(response=data, mimetype="application/json", status=200) # application/gzip
     # stats = pstats.Stats(pr) # código comentado  que sirve para evaluar el rendimiento de la respuesta
     # stats.sort_stats(pstats.SortKey.TIME) # código comentado  que sirve para evaluar el rendimiento de la respuesta
