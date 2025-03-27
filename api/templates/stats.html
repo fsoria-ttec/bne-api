@@ -16,6 +16,249 @@
   </div>
 </div>
   
+<script>
+    const get_data = async(url) => {
+        try {
+            let res = await fetch(url);
+            if (!res.ok) {
+                throw new Error(`Error HTTP: ${res.status}`);
+            }
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            console.error("Error obteniendo datos:", error);
+            return { success: false, data: [] };
+        }
+    };
+    
+    // Usar URL relativa para evitar problemas de CORS
+    let url = "/api/queries";
+    const ctx = document.getElementById('myChart');
+    const errorsCanvas = document.getElementById('errors');
+    const is_from_web = document.getElementById('is_from_web');
+    const counterElement = document.getElementById('counter');
+
+    // Función para actualizar el contador
+    const updateCounter = (data) => {
+        if (!data || !data.data || !data.data.length) return;
+        
+        let totalRecords = 0;
+        try {
+            // Sumar todos los records si están disponibles
+            data.data.forEach(element => {
+                if (element.length && !isNaN(parseInt(element.length))) {
+                    totalRecords += parseInt(element.length);
+                }
+            });
+            
+            if (totalRecords > 0) {
+                counterElement.innerHTML = `¡${totalRecords.toLocaleString()} registros buscados por la comunidad!`;
+            } else {
+                counterElement.innerHTML = `Estadísticas de uso de la API`;
+            }
+        } catch (error) {
+            console.error("Error actualizando contador:", error);
+            counterElement.innerHTML = `Estadísticas de uso de la API`;
+        }
+    };
+
+    const create_chart = async() => {
+        try {
+            const data = await get_data(url);
+            if (!data.success || !data.data || !data.data.length) {
+                console.error("No hay datos para generar la gráfica de distribución");
+                return;
+            }
+            
+            // Inicializar contadores para todos los datasets posibles
+            const portions = {"per":0, "mon": 0, "moa":0, "ent":0, "geo":0, "ser":0, "mss":0, "vid":0, "par":0, "ele":0, "gra":0, "grp":0, "map":0, "con":0, "gen":0, "kit":0, "mam":0, "mat":0, "tit":0};
+            
+            // Contar ocurrencias por dataset
+            data.data.forEach(element => {
+                if (element.dataset && portions.hasOwnProperty(element.dataset)) {
+                    portions[element.dataset]++;
+                }
+            });
+            
+            // Filtrar solo datasets con valores
+            const activeDatasets = Object.entries(portions)
+                .filter(([_, count]) => count > 0)
+                .map(([dataset, _]) => dataset);
+                
+            const activeData = activeDatasets.map(dataset => portions[dataset]);
+            
+            // Generar colores automáticamente
+            const backgroundColors = [
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(255, 205, 86, 0.5)',
+                'rgba(201, 203, 207, 0.5)',
+                'rgba(162, 210, 255, 0.5)',
+                'rgba(255, 159, 64, 0.5)',
+                'rgba(153, 102, 255, 0.5)',
+                'rgba(255, 99, 255, 0.5)',
+                'rgba(54, 162, 235, 0.5)'
+            ];
+            
+            // Si hay datos para mostrar, crear la gráfica
+            if (activeDatasets.length > 0) {
+                new Chart(ctx, {
+                    type: 'polarArea',
+                    data: {
+                        labels: activeDatasets,
+                        datasets: [{
+                            label: 'Llamadas',
+                            data: activeData,
+                            backgroundColor: backgroundColors.slice(0, activeDatasets.length)
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Distribución de llamadas por dataset'
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Actualizar el contador
+            updateCounter(data);
+            
+        } catch (error) {
+            console.error("Error en create_chart:", error);
+        }
+    };
+
+    const create_chart_errors = async() => {
+        try {
+            const data = await get_data(url);
+            if (!data.success || !data.data || !data.data.length) {
+                console.error("No hay datos para generar la gráfica de errores");
+                return;
+            }
+            
+            const portions = {"success":0, "fail": 0};
+            
+            data.data.forEach(element => {
+                if (element.error === 0 || element.error === "0") {
+                    portions.success++;
+                } else {
+                    portions.fail++;
+                }
+            });
+            
+            const totalQueries = portions.success + portions.fail;
+            
+            if (totalQueries > 0) {
+                new Chart(errorsCanvas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ["Exitosas", "Fallidas"],
+                        datasets: [{
+                            label: 'Distribución de llamadas',
+                            data: [
+                                (portions.success / totalQueries) * 100,
+                                (portions.fail / totalQueries) * 100
+                            ],
+                            backgroundColor: [
+                                'rgba(153, 217, 140, 0.7)',
+                                'rgba(255, 175, 204, 0.7)',
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.raw || 0;
+                                        return `${label}: ${value.toFixed(1)}% (${context.dataset.data[context.dataIndex]})`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Error en create_chart_errors:", error);
+        }
+    };
+
+    const create_chart_is_from_web = async() => {
+        try {
+            const data = await get_data(url);
+            if (!data.success || !data.data || !data.data.length) {
+                console.error("No hay datos para generar la gráfica web/api");
+                return;
+            }
+            
+            const portions = {"web":0, "api": 0};
+            
+            data.data.forEach(element => {
+                if (element.is_from_web == 1 || element.is_from_web === true || element.is_from_web === "1") {
+                    portions.web++;
+                } else {
+                    portions.api++;
+                }
+            });
+            
+            const totalQueries = portions.web + portions.api;
+            
+            if (totalQueries > 0) {
+                new Chart(is_from_web, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ["WEB", "API"],
+                        datasets: [{
+                            label: 'Origen de llamadas',
+                            data: [
+                                (portions.web / totalQueries) * 100,
+                                (portions.api / totalQueries) * 100
+                            ],
+                            backgroundColor: [
+                                'rgba(153, 217, 140, 0.7)',
+                                'rgba(162, 210, 255, 0.7)',
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.raw || 0;
+                                        const count = portions[label.toLowerCase()];
+                                        return `${label}: ${value.toFixed(1)}% (${count})`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Error en create_chart_is_from_web:", error);
+        }
+    };
+
+    // Ejecutar todas las funciones para crear las gráficas
+    create_chart();
+    create_chart_errors();
+    create_chart_is_from_web();
+</script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
   <script>
     const get_data = async(url) => {
