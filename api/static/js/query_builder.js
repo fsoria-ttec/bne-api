@@ -163,6 +163,12 @@ const show_filters = () => {
         }
     }
     
+    // Incluir el modo de previsualización
+    const previewModeInput = document.getElementById('preview_mode');
+    if (previewModeInput) {
+        kvs['preview_mode'] = previewModeInput.value;
+    }
+    
     // Construir la cadena de consulta
     for (const [k, v] of Object.entries(kvs)) {
         if (v && k !== 'page') {  // Verificar nuevamente que no se incluya page
@@ -178,7 +184,6 @@ const show_filters = () => {
     }
     
     return result.substring(0, result.length - 1);
-
 };
 
 const trash_filter = (button) => {

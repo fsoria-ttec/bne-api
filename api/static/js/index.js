@@ -1,3 +1,7 @@
+function formatNumber(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
 const add_filter = () => {
     const filter_html = `
     <div class="d-flex flex-row border-1 border mb-4 justify-content-center align-items-center bne_and_or" style="width: 120px;height: 30px;" id="bne_and_or_1">
@@ -38,25 +42,78 @@ const add_filter = () => {
 
 let fields = [];
 
-const set_download_link =  (button) => {
+const set_download_link = () => {
     const csv_a = document.querySelector("#d_csv");
     const json_a = document.querySelector("#d_json");
-    let url = window.location.href;
-    url = url.replace("web/?dataset=", "api/");
-    url = url.replace("&", "?");
-    if (fields.length > 0) {
-        url = url.replace("?view=human", "");
-        url = url.replace("?view=marc", "");
-        url = url.replace("?view=", "");
-        url = url.replace("&", "?");
-        csv_a.href = url + "&fields=" + fields.join(",")  + ".csv";
-        json_a.href = url  + "&fields=" + fields.join(",") + ".json";
-    } else {
-        csv_a.href = url + ".csv";
-        json_a.href = url  + ".json";
-    };
+    
+    // Construir la URL base para la API
+    let baseUrl = new URL(window.location.href);
+    const dataset = document.getElementById("dataset").value;
+    
+    // Crear una nueva URL limpia para la API
+    const apiUrl = new URL(`/api/${dataset}`, window.location.origin);
+    
+    // Agregar parámetros comunes
+    apiUrl.searchParams.set("is_from_web", "true");
+    
+    // Obtener los filtros de la URL actual (excepto preview_mode y view)
+    for (const [key, value] of baseUrl.searchParams.entries()) {
+        if (key !== "preview_mode" && key !== "view" && key !== "page" && 
+            key !== "dataset" && key !== "fields") {
+            apiUrl.searchParams.set(key, value);
+        }
+    }
+    
+    // Configurar la URL para descargas con los campos actualizados
+    if (fields && fields.length > 0) {
+        // Verificar que todos los campos sean válidos
+        const validFields = fields.filter(field => field && typeof field === 'string');
+        
+        // Solo agregar fields si hay campos válidos
+        if (validFields.length > 0) {
+            const fieldParam = validFields.join(",");
+            
+            // Crear las URLs de descarga
+            const csvUrl = new URL(apiUrl);
+            csvUrl.pathname += ".csv";
+            csvUrl.searchParams.set("fields", fieldParam);
+            
+            const jsonUrl = new URL(apiUrl);
+            jsonUrl.pathname += ".json";
+            jsonUrl.searchParams.set("fields", fieldParam);
+            
+            // Asignar las URLs a los enlaces
+            csv_a.href = csvUrl.toString();
+            json_a.href = jsonUrl.toString();
+            
+            // Habilitar el botón de descarga
+            const downloadButton = document.getElementById("download_button");
+            if (downloadButton) {
+                downloadButton.classList.remove("disabled");
+            }
+            
+            return;
+        }
+    }
+    
+    // Si no hay campos específicos, descargar todos
+    const csvUrl = new URL(apiUrl);
+    csvUrl.pathname += ".csv";
+    
+    const jsonUrl = new URL(apiUrl);
+    jsonUrl.pathname += ".json";
+    
+    csv_a.href = csvUrl.toString();
+    json_a.href = jsonUrl.toString();
+    
+    csv_a.setAttribute("download", `${dataset}.csv`);
+    json_a.setAttribute("download", `${dataset}.json`);
 
-
+    // Habilitar el botón de descarga
+    const downloadButton = document.getElementById("download_button");
+    if (downloadButton) {
+        downloadButton.classList.remove("disabled");
+    }
 };
 
 const populate_filters = () => {
@@ -67,9 +124,22 @@ const populate_filters = () => {
         );
     let args = get_args();
     
-    // Ignorar parámetros de paginación
+    // Ignorar parámetros que no son filtros
     if ('page' in args) {
         delete args.page;
+    }
+    
+    if ('preview_mode' in args) {
+        // Preservar el valor pero no mostrarlo como filtro
+        const previewMode = args.preview_mode;
+        delete args.preview_mode;
+        
+        // Actualizar el estado del toggle
+        const toggle = document.getElementById('preview-toggle');
+        if (toggle) {
+            toggle.checked = previewMode === "0";
+            updatePreviewMode();
+        }
     }
     
     const view_i = Object.keys(args).indexOf("view");
@@ -85,7 +155,7 @@ const populate_filters = () => {
         return;
     };
     
-    // Crear filtros UI para cada parámetro (excepto page y view)
+    // Crear filtros UI para cada parámetro (excepto los ya excluidos)
     let filterIndex = 0;
     Object.entries(args).forEach((arg, i) => {
         const [k, v] = arg;
@@ -185,9 +255,14 @@ const show_data = () => {
     };
 
     spinner.className = "visually-hidden";
-    // title.innerHTML = `Tiempo de respuesta: ${parseFloat(data.time).toFixed(2)}s`
-    if (data.total_records !== undefined) 
-        title.innerHTML = `${data.total_records} registros encontrados`
+    
+    // Mostrar información sobre el modo de previsualización si corresponde
+    if (data.preview_mode && data.full_record_count) {
+        title.innerHTML = `Mostrando previsualización (20 registros de ${formatNumber(data.full_record_count)} encontrados)`;
+    } else if (data.total_records !== undefined) {
+        title.innerHTML = `${formatNumber(data.total_records)} registros encontrados`;
+    }
+    
     download_button.className = "btn btn-dark dropdown-toggle";
     const records = data.data;
     const tr_k = document.createElement("tr");
@@ -256,9 +331,9 @@ function updatePagination(data) {
     const startRecord = (currentPage - 1) * pageSize + 1;
     const endRecord = Math.min(currentPage * pageSize, totalRecords);
     
-    document.getElementById('page-start').textContent = startRecord;
-    document.getElementById('page-end').textContent = endRecord;
-    document.getElementById('total-records').textContent = totalRecords;
+    document.getElementById('page-start').textContent = formatNumber(startRecord);
+    document.getElementById('page-end').textContent = formatNumber(endRecord);
+    document.getElementById('total-records').textContent = formatNumber(totalRecords);
     
     // Actualizar botones de paginación
     const pagination = document.querySelector('.pagination');
@@ -356,30 +431,48 @@ function updatePagination(data) {
 }
 // Función para navegar a una página específica
 function goToPage(page) {
-    // Obtener la URL actual
     const url = new URL(window.location.href);
-    // Actualizar el parámetro de página
     url.searchParams.set('page', page);
-    // Navegar a la nueva URL
     window.location.href = url.toString();
 }
 
 const remove_col = (button) => {
-    cls_name = button.className.split(" ").at(-1);
+    // Obtener el nombre de la clase (campo) a eliminar
+    const cls_name = button.className.split(" ").at(-1);
+    
+    // Obtener los headers actuales
     const headers = get_headers();
-    headers.splice(headers.indexOf(cls_name),1);
+    
+    // Eliminar el campo de los headers
+    const headerIndex = headers.indexOf(cls_name);
+    if (headerIndex !== -1) {
+        headers.splice(headerIndex, 1);
+    }
+    
+    // Actualizar el arreglo fields correctamente
     if (fields.length > 0) {
-        fields.splice(fields.indexOf(cls_name),1);
+        const fieldIndex = fields.indexOf(cls_name);
+        if (fieldIndex !== -1) {
+            fields.splice(fieldIndex, 1);
+        }
     } else {
-        fields = headers;
-    };
-    console.log(fields); 
-    button.parentElement.parentElement.remove()
-    elements = Array(...document.getElementsByClassName(cls_name));
+        // Si fields está vacío, inicializarlo con los headers actualizados
+        fields = [...headers]; // Creamos una copia para evitar referencias compartidas
+    }
+    
+    console.log("Campos actualizados:", fields); 
+    
+    // Eliminar el elemento del DOM
+    button.parentElement.parentElement.remove();
+    
+    // Eliminar todas las celdas con esa clase
+    const elements = Array.from(document.getElementsByClassName(cls_name));
     elements.forEach((element) => {
         element.remove();
     });
-    // console.log(headers);
+    
+    // Actualizar los enlaces de descarga después de eliminar campos
+    set_download_link();
 };
 
 document.onkeydown= (event) => {
@@ -389,6 +482,8 @@ document.onkeydown= (event) => {
     }
     if (key == "v") {
         document.querySelector("#view").focus();
+
+
     } else if (key == "d") {
         document.querySelector("#dataset").focus();
     } else if (key == "r") {
